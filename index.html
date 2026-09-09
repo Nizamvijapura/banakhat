@@ -33,7 +33,8 @@ function calc(){let g=+$("guntha").value||0,r=+$("rate").value||0,t=g*r;$("acre"
 function addm(s,n){let d=new Date(s+"T00:00");d.setMonth(d.getMonth()+n);return d.toISOString().slice(0,10)}
 function autoPay(){let b=(+$("guntha").value||0)*(+$("rate").value||0)-(+($("adv").value)||0),q=Math.floor(b/4*100)/100;["p1","p2","p3"].forEach(x=>$(x).value=q);$("p4").value=Math.round((b-q*3)*100)/100;for(let i=1;i<5;i++)$("d"+i).value=addm($("date").value,Math.ceil((+$("months").value||6)*i/4))}
 function esc(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function sig(id){let c=$(id);return c.blank?"":c.toDataURL()}
+function sig(id){let c=$(id);return c.blank?"":c.toDataURL("image/png")}
+function photoData(id){let el=$(id);if(!el||!el.files||!el.files[0])return "";return URL.createObjectURL(el.files[0])}
 function make(){calc();let g=+$("guntha").value||0,r=+$("rate").value||0,t=g*r,a=+$("adv").value||0,b=t-a;
 $("preview").innerHTML=`<h2 style="text-align:center">બાનાખત (જમીન ખરીદ-વેચાણનો કરાર)</h2>
 <p>આજ રોજ તા. <b>${fd($("date").value)}</b> ના દિવસે નીચે દર્શાવેલ ખરીદનાર અને વેચનાર વચ્ચે જમીન ખરીદ-વેચાણ અંગે આ બાનાખત કરવામાં આવે છે.</p>
@@ -48,7 +49,14 @@ $("preview").innerHTML=`<h2 style="text-align:center">બાનાખત (જમ
 <p>વેચનાર ખાતરી આપે છે કે જમીન અંગેનો કાયદેસર હક ધરાવે છે અને કોઈ છુપાયેલો બોજો/ગીરો/દાવો હોય તો તેની જવાબદારી વેચનારની રહેશે. સંપૂર્ણ ચુકવણી તથા કાયદેસર પ્રક્રિયા પૂર્ણ થયા બાદ જરૂરી વેચાણ દસ્તાવેજ ખરીદનારના નામે કરી આપવાનો રહેશે. બંને પક્ષોએ શરતો વાંચી/સમજી સ્વેચ્છાથી સ્વીકારી છે.</p>
 <div class="pgrid"><div><b>ખરીદનારની સહી</b><br>${sig("sb")?`<img class="sigimg" src="${sig("sb")}">`:"________________"}</div><div><b>વેચનારની સહી</b><br>${sig("ss")?`<img class="sigimg" src="${sig("ss")}">`:"________________"}</div><div><b>સાક્ષી 1:</b> ${esc($("w1").value)}<br>મો. ${esc($("w1m").value)}<br>${photoData("w1p")?`<img class="sigimg" style="height:65px;width:75px;object-fit:cover" src="${photoData("w1p")}">`:""}<br>${sig("sw1")?`<img class="sigimg" src="${sig("sw1")}">`:"સહી: __________"}</div><div><b>સાક્ષી 2:</b> ${esc($("w2").value)}<br>મો. ${esc($("w2m").value)}<br>${photoData("w2p")?`<img class="sigimg" style="height:65px;width:75px;object-fit:cover" src="${photoData("w2p")}">`:""}<br>${sig("sw2")?`<img class="sigimg" src="${sig("sw2")}">`:"સહી: __________"}</div></div>`;
 $("out").style.display="block";window.scrollTo(0,$("out").offsetTop)}
-function pdf(){make();setTimeout(()=>window.print(),300)}
+function pdf(){
+  make();
+  setTimeout(()=>{
+    const imgs=[...document.querySelectorAll("#preview img")];
+    Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(r=>{img.onload=img.onerror=r})))
+      .finally(()=>setTimeout(()=>window.print(),150));
+  },250);
+}
 function setup(id){let c=$(id),x=c.getContext("2d"),down=false;c.blank=true;function resize(){let r=c.getBoundingClientRect(),q=devicePixelRatio||1;c.width=r.width*q;c.height=r.height*q;x.setTransform(q,0,0,q,0,0);x.lineWidth=2.2;x.lineCap="round"}resize();addEventListener("resize",resize);function pos(e){let r=c.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}c.onpointerdown=e=>{down=true;c.blank=false;let p=pos(e);x.beginPath();x.moveTo(...p)};c.onpointermove=e=>{if(!down)return;let p=pos(e);x.lineTo(...p);x.stroke()};c.onpointerup=()=>down=false;c.onpointerleave=()=>down=false}
 ["sb","ss","sw1","sw2"].forEach(setup);function clr(id){let c=$(id);c.getContext("2d").clearRect(0,0,c.width,c.height);c.blank=true}
 </script></body></html>
