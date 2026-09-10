@@ -145,10 +145,36 @@ button{font-size:17px!important}
 }
 </style>
 
+
+<style>
+.delete-btn{color:#fff!important;background:#d62828!important;border:1px solid #b51f1f!important;font-weight:900!important}
+.date-display{font-weight:800}
+.amount-words{margin-top:4px;font-size:14px;font-weight:700}
+</style>
+
+
+<style>
+.delete-btn{
+  background:#d62828!important;
+  color:#fff!important;
+  border:1px solid #b51f1f!important;
+  width:42px!important;
+  min-width:42px!important;
+  height:42px!important;
+  padding:0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:20px!important;
+  line-height:1!important;
+  font-weight:900!important;
+}
+</style>
+
 </head>
 <body>
 <div class="wrap">
-<div class="header"><div class="ico">📄</div><div><h1>જમીન બાનાખત તૈયાર કરો</h1><p>સરળ • ઝડપી • વિશ્વસનીય</p></div></div>
+<div class="header"><div><h1>જમીન બાનાખત તૈયાર કરો</h1><p>સરળ • ઝડપી • વિશ્વસનીય</p></div></div>
 
 <div class="grid">
 <section class="card land"><h2>🏠 જમીનની વિગતો</h2><div class="pad">
@@ -169,7 +195,7 @@ button{font-size:17px!important}
 <div class="photo-wrap">
   <img id="buyerPhotoPreview" class="photo-preview" alt="ખરીદનારનો ફોટો">
   <label class="upload-btn">📷 ખરીદનારનો ફોટો<input id="buyerPhoto" type="file" accept="image/*" capture="environment"></label>
-  <button class="light" type="button" onclick="clearPhoto('buyer')">ફોટો કાઢો</button>
+  <button class="light delete-btn" type="button" onclick="clearPhoto('buyer')">🗑️</button>
 </div>
 </div></section>
 
@@ -181,15 +207,15 @@ button{font-size:17px!important}
 <div class="photo-wrap">
   <img id="sellerPhotoPreview" class="photo-preview" alt="વેચનારનો ફોટો">
   <label class="upload-btn">📷 વેચનારનો ફોટો<input id="sellerPhoto" type="file" accept="image/*" capture="environment"></label>
-  <button class="light" type="button" onclick="clearPhoto('seller')">ફોટો કાઢો</button>
+  <button class="light delete-btn" type="button" onclick="clearPhoto('seller')">🗑️</button>
 </div>
 </div></section>
 
 <section class="card main"><h2>📄 બાનાખતની મુખ્ય માહિતી</h2><div class="pad">
 <label>કુલ કિંમત ₹</label><input class="key-price" id="total" type="number" min="0" value="0">
 <div class="row2"><div><label>બાનાપેટે / એડવાન્સ ₹</label><input id="adv" type="number" min="0" value="0"></div><div><label>બાકી રકમ ₹</label><input id="bal" readonly></div></div>
-<label>બાનાખત તારીખ *</label><input id="date" type="date">
-<label>છેલ્લી તારીખ</label><input id="due" type="date">
+<label>બાનાખત તારીખ * <span class="date-display">(DD/MM/YYYY)</span></label><input id="date" type="date">
+<label>છેલ્લી તારીખ <span class="date-display">(DD/MM/YYYY)</span></label><input id="due" type="date">
 <label>ખાસ શરતો / અન્ય વિગતો</label><textarea id="terms"></textarea>
 </div></section>
 
@@ -200,10 +226,10 @@ button{font-size:17px!important}
 </div></section>
 
 <section class="card sign"><h2>✍️ હસ્તાક્ષર (Signature)</h2><div class="pad siggrid">
-<div class="sigbox"><b>ખરીદનારની સહી</b><canvas class="signature" id="sb"></canvas><button class="light" onclick="clearSig('sb')">સાફ કરો</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sb',this)"></label></div>
-<div class="sigbox"><b>વેચનારની સહી</b><canvas class="signature" id="ss"></canvas><button class="light" onclick="clearSig('ss')">સાફ કરો</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('ss',this)"></label></div>
-<div class="sigbox"><b>સાક્ષી 1 ની સહી</b><canvas class="signature" id="sw1"></canvas><button class="light" onclick="clearSig('sw1')">સાફ કરો</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sw1',this)"></label></div>
-<div class="sigbox"><b>સાક્ષી 2 ની સહી</b><canvas class="signature" id="sw2"></canvas><button class="light" onclick="clearSig('sw2')">સાફ કરો</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sw2',this)"></label></div>
+<div class="sigbox"><b>ખરીદનારની સહી</b><canvas class="signature" id="sb"></canvas><button class="light" onclick="clearSig('sb')" class="delete-btn">🗑️</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sb',this)"></label></div>
+<div class="sigbox"><b>વેચનારની સહી</b><canvas class="signature" id="ss"></canvas><button class="light" onclick="clearSig('ss')" class="delete-btn">🗑️</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('ss',this)"></label></div>
+<div class="sigbox"><b>સાક્ષી 1 ની સહી</b><canvas class="signature" id="sw1"></canvas><button class="light" onclick="clearSig('sw1')" class="delete-btn">🗑️</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sw1',this)"></label></div>
+<div class="sigbox"><b>સાક્ષી 2 ની સહી</b><canvas class="signature" id="sw2"></canvas><button class="light" onclick="clearSig('sw2')" class="delete-btn">🗑️</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sw2',this)"></label></div>
 </div><div class="note">સહી મોબાઇલની સ્ક્રીન પર આંગળીથી કરી શકો છો અથવા પહેલેથી કરેલી સહીનો ફોટો/PNG અપલોડ કરી શકો છો.</div></section>
 </div>
 
@@ -223,6 +249,25 @@ const $=id=>document.getElementById(id);
 const V=id=>($(id).value||"").trim();
 const M=n=>new Intl.NumberFormat("en-IN",{maximumFractionDigits:2}).format(Number(n)||0);
 const E=s=>String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+
+const guOnes=["શૂન્ય","એક","બે","ત્રણ","ચાર","પાંચ","છ","સાત","આઠ","નવ","દસ","અગિયાર","બાર","તેર","ચૌદ","પંદર","સોળ","સત્તર","અઢાર","ઓગણીસ"];
+const guTens=["","","વીસ","ત્રીસ","ચાલીસ","પચાસ","સાઠ","સિત્તેર","એંસી","નેવું"];
+function guNum(n){
+ n=Math.floor(Number(n)||0);
+ if(n<20)return guOnes[n];
+ if(n<100)return guTens[Math.floor(n/10)]+(n%10?" "+guOnes[n%10]:"");
+ if(n<1000)return guOnes[Math.floor(n/100)]+" સો"+(n%100?" "+guNum(n%100):"");
+ if(n<100000)return guNum(Math.floor(n/1000))+" હજાર"+(n%1000?" "+guNum(n%1000):"");
+ if(n<10000000)return guNum(Math.floor(n/100000))+" લાખ"+(n%100000?" "+guNum(n%100000):"");
+ return guNum(Math.floor(n/10000000))+" કરોડ"+(n%10000000?" "+guNum(n%10000000):"");
+}
+function guAmount(n){n=Math.round(Number(n)||0);return guNum(n)+" રૂપિયા પુરા";}
+function fmtDate(s){
+ if(!s)return "-";
+ const p=String(s).split("-");
+ if(p.length!==3)return s;
+ return `${p[2]}/${p[1]}/${p[0]}`;
+}
 function landCalc(){
  let g=+V("guntha")||0,r=+V("rate")||0;
  $("acre").value=g/40? (g/40).toFixed(4).replace(/0+$/,"").replace(/\.$/,"") : "0";
@@ -287,22 +332,22 @@ function photo(kind){return photoData[kind]||""}
 
 function makePreview(){
  let g=+V("guntha")||0,a=g/40,t=+V("total")||0,ad=+V("adv")||0,b=Math.max(0,t-ad);
- let rows=[...$("instBody").rows].map((r,i)=>`<tr><td>${i+1}</td><td>₹ ${M(r.querySelector(".ia").value)}</td><td>${E(r.querySelector(".id").value||"-")}</td></tr>`).join("");
+ let rows=[...$("instBody").rows].map((r,i)=>`<tr><td>${i+1}</td><td>₹ ${M(r.querySelector(".ia").value)}<br><small>${E(guAmount(r.querySelector(".ia").value))}</small></td><td>${fmtDate(r.querySelector(".id").value||"-")}</td></tr>`).join("");
  let S=id=>{let d=sig(id);return d?`<img src="${d}" style="height:58px;max-width:100%;object-fit:contain">`:"________________"};
  let P=kind=>{let d=photo(kind);return d?`<img src="${d}" class="photo-side">`:""};
  $("preview").innerHTML=`
  <div class="a4page">
-   <div class="pvhead"><h1><b>જમીન બાનાખત</b></h1><p>આજ રોજ જમીન ખરીદ-વેચાણ માટે બાનાખત કરવામાં આવે છે.</p><p><b>બાનાખત તારીખ: ${E(V("date"))}</b></p></div>
+   <div class="pvhead"><h1><b>જમીન બાનાખત</b></h1><p>આજ રોજ જમીન ખરીદ-વેચાણ માટે બાનાખત કરવામાં આવે છે.</p><p><b>બાનાખત તારીખ: ${fmtDate(V("date"))}</b></p></div>
    <div class="pvgrid">
     <div class="pvbox pvperson"><div class="photo-side">${P("buyer")}</div><b style="font-size:20px">ખરીદનાર (લેનાર)</b><br>નામ: ${E(V("buyer"))}<br>પિતાનું નામ: ${E(V("bf"))}<br>સરનામું: ${E(V("ba"))}<br>મો.: ${E(V("bm"))}</div>
     <div class="pvbox pvperson"><div class="photo-side">${P("seller")}</div><b style="font-size:20px">વેચનાર</b><br>નામ: ${E(V("seller"))}<br>પિતાનું નામ: ${E(V("sf"))}<br>સરનામું: ${E(V("sa"))}<br>મો.: ${E(V("sm"))}</div>
     <div class="pvbox"><b>જમીનની વિગતો</b><br>ગામ: ${E(V("village"))}<br>તાલુકો: ${E(V("taluka"))}<br>જિલ્લો: ${E(V("district"))}<br>સર્વે/બ્લોક: ${E(V("survey"))}<br>વિસ્તાર: ${M(g)} ગુંઠા = ${(g/40).toFixed(4)} એકર<br>${E(V("landdetail"))}</div>
-    <div class="pvbox"><b>બાનાખતની કિંમત</b><br>કુલ કિંમત: <b style="font-size:20px">₹ ${M(t)}</b><br>બાનાપેટે: <b>₹ ${M(ad)}</b><br>બાકી: <b>₹ ${M(b)}</b><br>છેલ્લી તારીખ: ${E(V("due"))}</div>
+    <div class="pvbox"><b>બાનાખતની કિંમત</b><br>કુલ કિંમત: <b style="font-size:20px">₹ ${M(t)}</b><div class="amount-words">શબ્દોમાં: ${E(guAmount(t))}</div><br>બાનાપેટે: <b>₹ ${M(ad)}</b><div class="amount-words">શબ્દોમાં: ${E(guAmount(ad))}</div><br>બાકી: <b>₹ ${M(b)}</b><div class="amount-words">શબ્દોમાં: ${E(guAmount(b))}</div><br>છેલ્લી તારીખ: ${fmtDate(V("due"))}</div>
    </div>
    <div class="pvclause">
     <p style="margin-top:0"><b>બાનાખતનો વિગતવાર કરાર:</b></p>
-    <p>આજ રોજ ઉપરોક્ત તારીખે હું વેચનાર, ઉપરોક્ત જમીન મારી માલિકીની અને કાયદેસર હકવાળી હોવાનું જણાવી, આ જમીન ખરીદનારને કુલ <b>₹ ${M(t)}</b> (રૂપિયા ${M(t)} પુરા) માં વેચવા માટે સ્વેચ્છાએ સંમત થયો/થઈ છું. ખરીદનારએ પણ ઉપરોક્ત જમીન, તેની હદ, વિસ્તાર, દસ્તાવેજી વિગતો તથા વેચનાર દ્વારા જણાવવામાં આવેલી માહિતી સમજીને આ જમીન ખરીદવાની સંમતિ આપી છે.</p>
-    <p>આજરોજ ખરીદનાર તરફથી વેચનારને બાનાપેટે/એડવાન્સ તરીકે <b>₹ ${M(ad)}</b> ચૂકવવામાં આવેલ છે, જે રકમ વેચનારએ સ્વીકારી હોવાનું માનવામાં આવે છે. કુલ વેચાણ કિંમતમાંથી બાકી રહેતી <b>₹ ${M(b)}</b> રકમ નીચે દર્શાવેલ હપ્તાઓ મુજબ ચૂકવવાની રહેશે.</p>
+    <p>આજ રોજ ઉપરોક્ત તારીખે હું વેચનાર, ઉપરોક્ત જમીન મારી માલિકીની અને કાયદેસર હકવાળી હોવાનું જણાવી, આ જમીન ખરીદનારને કુલ <b>₹ ${M(t)}</b> (<b>${E(guAmount(t))}</b>) માં વેચવા માટે સ્વેચ્છાએ સંમત થયો/થઈ છું. ખરીદનારએ પણ ઉપરોક્ત જમીન, તેની હદ, વિસ્તાર, દસ્તાવેજી વિગતો તથા વેચનાર દ્વારા જણાવવામાં આવેલી માહિતી સમજીને આ જમીન ખરીદવાની સંમતિ આપી છે.</p>
+    <p>આજરોજ ખરીદનાર તરફથી વેચનારને બાનાપેટે/એડવાન્સ તરીકે <b>₹ ${M(ad)}</b> (<b>${E(guAmount(ad))}</b>) ચૂકવવામાં આવેલ છે, જે રકમ વેચનારએ સ્વીકારી હોવાનું માનવામાં આવે છે. કુલ વેચાણ કિંમતમાંથી બાકી રહેતી <b>₹ ${M(b)}</b> (<b>${E(guAmount(b))}</b>) રકમ નીચે દર્શાવેલ હપ્તાઓ મુજબ ચૂકવવાની રહેશે.</p>
     <p>ખરીદનારએ આ જમીન કોઈપણ દબાણ, ધમકી, લાલચ કે ગેરસમજ વિના, પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં, સ્વેચ્છાએ ખરીદવાની સંમતિ આપી છે. વેચનારએ પણ કોઈપણ દબાણ કે બળજબરી વિના પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં આ બાનાખત કરી છે.</p>
     <p>વેચનાર ખાતરી આપે છે કે ઉપરોક્ત જમીન અંગેનો માલિકી હક તથા વેચાણ કરવાનો અધિકાર પોતે ધરાવે છે. જમીન ઉપર કોઈ ગીરો, બોજો, કોર્ટ કેસ, દાવો, કબજાનો વિવાદ, સરકારી બાકી, અગાઉનું વેચાણ/બાનાખત અથવા અન્ય કોઈ હક-દાવો હોય અને તે બાબત ખરીદનારથી છુપાવવામાં આવી હોય તો તેની જવાબદારી વેચનારની રહેશે.</p>
     <p>વેચનાર જમીનના મૂળ હક-દસ્તાવેજો તથા જરૂરી કાયદેસર દસ્તાવેજી પ્રક્રિયામાં ખરીદનારને સહકાર આપશે. સંપૂર્ણ વેચાણ કિંમત પ્રાપ્ત થયા બાદ, લાગુ પડતા કાયદા અને જરૂરી પ્રક્રિયા મુજબ વેચાણ દસ્તાવેજ/રજિસ્ટર્ડ દસ્તાવેજ કરાવવા માટે વેચનાર હાજર રહી જરૂરી સહી તથા કાર્યવાહી કરશે.</p>
