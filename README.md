@@ -1,1 +1,1 @@
-GitHub Pages માટે index.html, manifest.webmanifest ને repository ના root માં upload કરો.
+GitHub Pages: upload index.html and manifest.webmanifest to repository root. Settings → Pages → Deploy from a branch → main → /(root).
