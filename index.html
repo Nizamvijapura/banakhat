@@ -1,112 +1,29 @@
-<!doctype html><html lang="gu"><head><meta charset="utf-8"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#111111"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="બાનાખત"><meta name="viewport" content="width=device-width,initial-scale=1"><title>જમીન બાનાખત</title>
-<style>
-*{box-sizing:border-box}body{margin:0;background:#eef1f5;font-family:"Noto Sans Gujarati","Nirmala UI",Arial,sans-serif;color:#111}.wrap{max-width:1050px;margin:auto;padding:12px}.card{background:#fff;border-radius:12px;padding:16px;margin:10px 0;box-shadow:0 2px 10px #0001}h1{text-align:center;font-size:26px}h2{font-size:19px;border-bottom:1px solid #ddd;padding-bottom:7px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.three{grid-template-columns:repeat(3,1fr)}label{font-weight:600}input,textarea{width:100%;padding:9px;margin-top:4px;border:1px solid #aaa;border-radius:7px;font-size:16px}textarea{min-height:65px}.result{padding:10px;background:#f2f5f8;border-radius:7px;font-weight:bold}.btn{padding:10px 15px;border:0;border-radius:8px;font-weight:bold;font-size:16px;margin:4px;cursor:pointer}.primary{background:#111;color:#fff}.signature{width:100%;height:135px;border:2px dashed #888;border-radius:7px;touch-action:none}.preview{background:#fff;max-width:794px;margin:auto;padding:28px;line-height:1.55;border:1px solid #ccc}.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.sigimg{height:65px;max-width:100%}@media(max-width:700px){.grid,.three,.pgrid{grid-template-columns:1fr}}@media print{body{background:#fff}.no-print{display:none!important}.preview{border:0;max-width:none;padding:0}@page{size:A4;margin:12mm}}
-</style><style>
-.thumb-cam-grid{display:flex;gap:12px;flex-wrap:wrap}
-.thumb-cam-box{border:1px solid #bbb;border-radius:8px;padding:10px;background:#fafafa;min-width:180px}
-.thumb-cam-box input{margin-top:8px;max-width:100%}
-.thumb-cam-box img{display:block;width:90px;height:75px;object-fit:contain;border:1px solid #999;background:#fff;margin:8px auto}
-@media print{#thumbCameraSection{display:none!important}}
-</style>
-</head><body>
-<div class="wrap no-print">
-<div class="card"><h1>જમીન બાનાખત જનરેટર</h1><div class="grid"><label>તારીખ<input type="date" id="date"></label><label>સમયમર્યાદા (મહિના)<input type="number" id="months" value="6"></label></div></div>
-<div class="card"><h2>જમીનની વિગતો</h2><div class="grid three"><label>કુલ ગુંઠા<input type="number" id="guntha" value="0" step=".01"></label><label>એકર (40 ગુંઠા = 1)<input id="acre" readonly></label><label>દર ગુંઠો ₹<input type="number" id="rate" value="2500"></label></div><div class="result">કુલ કિંમત: <span id="total">₹0</span></div><div class="grid"><label>ગામ<input id="village"></label><label>તાલુકો<input id="taluka"></label><label>જિલ્લો<input id="district"></label><label>સર્વે/બ્લોક નં.<input id="survey"></label><label>ખાતા નં.<input id="khata"></label><label>ચાર હદ<textarea id="bounds"></textarea></label></div></div>
-<div class="card"><h2>ખરીદનાર (લેનાર)</h2><div class="grid">
-<label>નામ<input id="buyer"></label><label>મોબાઇલ<input id="bm"></label>
-<label style="grid-column:1/-1">સરનામું<textarea id="ba"></textarea></label>
-<label>ફોટો<input type="file" id="bp" accept="image/*" capture="environment"></label>
-</div></div>
-<div class="card"><h2>વેચનાર</h2><div class="grid">
-<label>નામ<input id="seller"></label><label>મોબાઇલ<input id="sm"></label>
-<label style="grid-column:1/-1">સરનામું<textarea id="sa"></textarea></label>
-<label>ફોટો<input type="file" id="sp" accept="image/*" capture="environment"></label>
-</div></div>
-<div class="card"><h2>ચુકવણી</h2><div class="grid"><label>બાનાપેટે એડવાન્સ ₹<input type="number" id="adv" value="0"></label><div class="result">બાકી: <span id="bal">₹0</span></div></div><p>“Automatic 4 હપ્તા” દબાવતા બાકીની રકમ 4 હપ્તામાં વહેંચાશે.</p><button class="btn" onclick="autoPay()">Automatic 4 હપ્તા</button><div class="grid three">
-<label>હપ્તો 1 ₹<input type="number" id="p1"></label><label>તારીખ<input type="date" id="d1"></label><label>હપ્તો 2 ₹<input type="number" id="p2"></label><label>તારીખ<input type="date" id="d2"></label><label>હપ્તો 3 ₹<input type="number" id="p3"></label><label>તારીખ<input type="date" id="d3"></label><label>હપ્તો 4 ₹<input type="number" id="p4"></label><label>તારીખ<input type="date" id="d4"></label></div></div>
-<div class="card"><h2>સાક્ષીઓ</h2><div class="grid">
-<label>સાક્ષી 1 નામ<input id="w1"></label><label>મોબાઇલ<input id="w1m"></label>
-<label>સાક્ષી 1 ફોટો<input type="file" id="w1p" accept="image/*" capture="environment"></label>
-<label>સાક્ષી 2 નામ<input id="w2"></label><label>મોબાઇલ<input id="w2m"></label>
-<label>સાક્ષી 2 ફોટો<input type="file" id="w2p" accept="image/*" capture="environment"></label>
-</div></div>
-<div class="card"><h2>સ્ક્રીન પર આંગળી/માઉસથી સહી કરો</h2><div class="grid"><div>ખરીદનાર<canvas class="signature" id="sb"></canvas><button class="btn" onclick="clr('sb')">સાફ</button></div><div>વેચનાર<canvas class="signature" id="ss"></canvas><button class="btn" onclick="clr('ss')">સાફ</button></div><div>સાક્ષી 1<canvas class="signature" id="sw1"></canvas><button class="btn" onclick="clr('sw1')">સાફ</button></div><div>સાક્ષી 2<canvas class="signature" id="sw2"></canvas><button class="btn" onclick="clr('sw2')">સાફ</button></div></div></div>
-<div class="card"><button class="btn primary" onclick="make()">બાનાખત તૈયાર કરો</button><button class="btn primary" onclick="pdf()">PDF / Printમાં Save કરો</button></div></div>
-<div id="out" style="display:none"><div class="preview" id="preview"></div></div>
+<!doctype html><html lang="gu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>જમીન બાનાખત</title><style>
+*{box-sizing:border-box}body{font-family:"Noto Sans Gujarati","Nirmala UI",Arial;background:#eef2f7;margin:0;color:#172033}.wrap{max-width:1200px;margin:auto;padding:12px}.head{background:linear-gradient(100deg,#0d4da3,#1d7180);color:white;padding:18px;border-radius:12px}.head h1{margin:0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}.card{background:white;border:1px solid #d3dbe5;border-radius:9px;overflow:hidden}.card h2{margin:0;padding:10px;background:#edf5ff;font-size:18px}.pad{padding:10px}label{display:block;font-weight:bold;margin:7px 0 3px}input,textarea{width:100%;padding:9px;border:1px solid #bcc7d5;border-radius:6px;font:inherit}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px}.actions button{padding:11px 18px;border:0;border-radius:7px;color:white;font-weight:bold}.go{background:#159447}.pdf{background:#df3030}.jpg{background:#126be0}.pr{background:#596273}.inst{grid-column:span 2}.instbox{border:2px solid #347dbc;border-radius:7px;overflow:hidden}.instbox table{width:100%;border-collapse:collapse}.instbox th,.instbox td{border:1px solid #9dbddd;padding:5px;text-align:center}.instbox th{background:#eaf5ff}.sign{grid-column:span 3}.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.sb{border:1px solid #ccd5e0;padding:8px;text-align:center;border-radius:7px}.sb canvas{width:100%;height:105px;border:1px dashed #888;touch-action:none}.preview{margin-top:15px}.preview h3{text-align:center}.paper{background:#fff;width:210mm;min-height:297mm;margin:auto;padding:12mm;border:1px solid #aaa}.pvgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.pvbox{border:1px solid #444;padding:7px}.pvtable{width:100%;border-collapse:collapse;margin-top:8px}.pvtable th,.pvtable td{border:1px solid #444;padding:5px}.pvsig{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.pvsig>div{border:1px solid #444;min-height:80px;text-align:center;padding:5px}.pvsig img{height:55px;max-width:100%;object-fit:contain}@media(max-width:850px){.grid{grid-template-columns:1fr}.inst,.sign{grid-column:auto}.paper{width:100%;min-height:auto;padding:15px}}@media print{body{background:white}.wrap> .head,.wrap>.grid,.actions,.preview>h3{display:none!important}.paper{border:0;box-shadow:none;width:210mm;min-height:297mm;margin:0}@page{size:A4;margin:0}}
+</style></head><body><div class="wrap"><div class="head"><h1>📄 જમીન બાનાખત તૈયાર કરો</h1><div>સરળ • ઝડપી • વિશ્વસનીય</div></div>
+<div class="grid">
+<section class="card"><h2>🏠 જમીનની વિગતો</h2><div class="pad"><label>ગામનું નામ *</label><input id="village"><div class="row"><div><label>તાલુકો</label><input id="taluka"></div><div><label>જિલ્લો</label><input id="district"></div></div><label>સર્વે / બ્લોક નંબર</label><input id="survey"><div class="row"><div><label>ગુંઠા</label><input id="guntha" type="number" oninput="land()"></div><div><label>એકર</label><input id="acre" type="number" oninput="acres()"></div></div><label>ગુંઠા દીઠ કિંમત ₹</label><input id="rate" type="number" value="2500" oninput="land()"><label>જમીનની વિગત</label><textarea id="landdetail"></textarea></div></section>
+<section class="card"><h2>👤 ખરીદનાર</h2><div class="pad"><label>નામ *</label><input id="buyer"><label>પિતાનું નામ</label><input id="bf"><label>સરનામું</label><textarea id="ba"></textarea><label>મોબાઇલ</label><input id="bm"></div></section>
+<section class="card"><h2>👤 વેચનાર</h2><div class="pad"><label>નામ *</label><input id="seller"><label>પિતાનું નામ</label><input id="sf"><label>સરનામું</label><textarea id="sa"></textarea><label>મોબાઇલ</label><input id="sm"></div></section>
+<section class="card"><h2>📄 બાનાખતની માહિતી</h2><div class="pad"><label>કુલ કિંમત ₹</label><input id="total" type="number" oninput="bal()"><div class="row"><div><label>બાનાપેટે ₹</label><input id="adv" type="number" value="0" oninput="bal()"></div><div><label>બાકી ₹</label><input id="rem" readonly></div></div><label>બાનાખત તારીખ</label><input id="date" type="date"><label>છેલ્લી તારીખ</label><input id="due" type="date"><label>ખાસ શરતો</label><textarea id="terms"></textarea></div></section>
+<section class="card inst"><h2>📅 હપ્તાની વિગતો</h2><div class="pad"><div class="row"><div><label>કુલ હપ્તા કેટલા?</label><input id="n" type="number" min="1" max="30" value="4"></div><div style="display:flex;align-items:end"><button class="go" style="width:100%" onclick="makeInst()">+ હપ્તાની યાદી બનાવો</button></div></div><div class="instbox"><table><thead><tr><th>હપ્તા</th><th>રકમ ₹</th><th>તારીખ</th><th></th></tr></thead><tbody id="ib"></tbody></table></div></div></section>
+<section class="card sign"><h2>✍️ હસ્તાક્ષર (Signature)</h2><div class="pad sg"><div class="sb"><b>ખરીદનારની સહી</b><canvas id="s1"></canvas><button onclick="clr('s1')">સાફ કરો</button></div><div class="sb"><b>વેચનારની સહી</b><canvas id="s2"></canvas><button onclick="clr('s2')">સાફ કરો</button></div><div class="sb"><b>સાક્ષી 1 ની સહી</b><canvas id="s3"></canvas><button onclick="clr('s3')">સાફ કરો</button></div><div class="sb"><b>સાક્ષી 2 ની સહી</b><canvas id="s4"></canvas><button onclick="clr('s4')">સાફ કરો</button></div></div></section>
+</div><div class="actions"><button class="go" onclick="preview()">📄 બાનાખત તૈયાર કરો</button><button class="pdf" onclick="pdf()">📕 PDF માં Save કરો</button><button class="jpg" onclick="jpg()">🖼️ JPG માં Save કરો</button><button class="pr" onclick="window.print()">🖨️ Print કરો</button></div>
+<div class="preview"><h3>બાનાખત Preview</h3><div id="paper" class="paper"></div></div></div>
 <script>
-const $=x=>document.getElementById(x), money=x=>"₹"+Number(x||0).toLocaleString("en-IN"), fd=x=>x?new Date(x+"T00:00").toLocaleDateString("en-IN"):"________";
-function calc(){let g=+$("guntha").value||0,r=+$("rate").value||0,t=g*r;$("acre").value=(g/40).toLocaleString("en-IN",{maximumFractionDigits:4});$("total").textContent=money(t);$("bal").textContent=money(t-(+$("adv").value||0))}
-["guntha","rate","adv"].forEach(x=>$(x).oninput=calc);$("date").value=new Date().toISOString().slice(0,10);calc();
-function addm(s,n){let d=new Date(s+"T00:00");d.setMonth(d.getMonth()+n);return d.toISOString().slice(0,10)}
-function autoPay(){let b=(+$("guntha").value||0)*(+$("rate").value||0)-(+($("adv").value)||0),q=Math.floor(b/4*100)/100;["p1","p2","p3"].forEach(x=>$(x).value=q);$("p4").value=Math.round((b-q*3)*100)/100;for(let i=1;i<5;i++)$("d"+i).value=addm($("date").value,Math.ceil((+$("months").value||6)*i/4))}
-function esc(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function sig(id){let c=$(id);return c.blank?"":c.toDataURL("image/png")}
-function photoData(id){let el=$(id);if(!el||!el.files||!el.files[0])return "";return URL.createObjectURL(el.files[0])}
-function make(){calc();let g=+$("guntha").value||0,r=+$("rate").value||0,t=g*r,a=+$("adv").value||0,b=t-a;
-$("preview").innerHTML=`<h2 style="text-align:center">બાનાખત (જમીન ખરીદ-વેચાણનો કરાર)</h2>
-<p>આજ રોજ તા. <b>${fd($("date").value)}</b> ના દિવસે નીચે દર્શાવેલ ખરીદનાર અને વેચનાર વચ્ચે જમીન ખરીદ-વેચાણ અંગે આ બાનાખત કરવામાં આવે છે.</p>
-<div class="pgrid" style="align-items:start">
-<div><b>ખરીદનારનો ફોટો</b><br>${photoData("bp")?`<img class="sigimg" style="height:95px;width:110px;object-fit:cover" src="${photoData("bp")}">`:"ફોટો: __________"}</div>
-<div><b>વેચનારનો ફોટો</b><br>${photoData("sp")?`<img class="sigimg" style="height:95px;width:110px;object-fit:cover" src="${photoData("sp")}">`:"ફોટો: __________"}</div>
-</div>
-<div class="pgrid"><div><b>ખરીદનાર (લેનાર)</b><br>નામ: ${esc($("buyer").value)}<br>મો.: ${esc($("bm").value)}<br>સરનામું: ${esc($("ba").value)}</div><div><b>વેચનાર</b><br>નામ: ${esc($("seller").value)}<br>મો.: ${esc($("sm").value)}<br>સરનામું: ${esc($("sa").value)}</div></div>
-<p><b>જમીન:</b> ગામ ${esc($("village").value)}, તાલુકો ${esc($("taluka").value)}, જિલ્લો ${esc($("district").value)}, સર્વે/બ્લોક નં. ${esc($("survey").value)}, ખાતા નં. ${esc($("khata").value)}. કુલ <b>${g} ગુંઠા</b> એટલે <b>${(g/40).toLocaleString("en-IN",{maximumFractionDigits:4})} એકર</b>. દર ગુંઠો ${money(r)} પ્રમાણે કુલ કિંમત <b>${money(t)}</b>. ચાર હદ: ${esc($("bounds").value)}.</p>
-<p>આજે બાનાપેટે <b>${money(a)}</b> ચૂકવેલ છે. બાકી <b>${money(b)}</b> રહે છે. બાકી રકમ 4 હપ્તામાં, મહત્તમ <b>${$("months").value} મહિનાની અંદર</b> ચૂકવવાની રહેશે.</p>
-<p>હપ્તો 1: ${money($("p1").value)} — ${fd($("d1").value)} &nbsp; હપ્તો 2: ${money($("p2").value)} — ${fd($("d2").value)}<br>હપ્તો 3: ${money($("p3").value)} — ${fd($("d3").value)} &nbsp; હપ્તો 4: ${money($("p4").value)} — ${fd($("d4").value)}</p>
-<p>વેચનાર ખાતરી આપે છે કે જમીન અંગેનો કાયદેસર હક ધરાવે છે અને કોઈ છુપાયેલો બોજો/ગીરો/દાવો હોય તો તેની જવાબદારી વેચનારની રહેશે. સંપૂર્ણ ચુકવણી તથા કાયદેસર પ્રક્રિયા પૂર્ણ થયા બાદ જરૂરી વેચાણ દસ્તાવેજ ખરીદનારના નામે કરી આપવાનો રહેશે. બંને પક્ષોએ શરતો વાંચી/સમજી સ્વેચ્છાથી સ્વીકારી છે.</p>
-<div class="pgrid"><div><b>ખરીદનારની સહી</b><br>${sig("sb")?`<img class="sigimg" src="${sig("sb")}">`:"________________"}</div><div><b>વેચનારની સહી</b><br>${sig("ss")?`<img class="sigimg" src="${sig("ss")}">`:"________________"}</div><div><b>સાક્ષી 1:</b> ${esc($("w1").value)}<br>મો. ${esc($("w1m").value)}<br>${photoData("w1p")?`<img class="sigimg" style="height:65px;width:75px;object-fit:cover" src="${photoData("w1p")}">`:""}<br>${sig("sw1")?`<img class="sigimg" src="${sig("sw1")}">`:"સહી: __________"}</div><div><b>સાક્ષી 2:</b> ${esc($("w2").value)}<br>મો. ${esc($("w2m").value)}<br>${photoData("w2p")?`<img class="sigimg" style="height:65px;width:75px;object-fit:cover" src="${photoData("w2p")}">`:""}<br>${sig("sw2")?`<img class="sigimg" src="${sig("sw2")}">`:"સહી: __________"}</div></div>`;
-$("out").style.display="block";window.scrollTo(0,$("out").offsetTop)}
-function pdf(){addCameraThumbsToPreview();addThumbsToPreview();
-  make();
-  setTimeout(()=>{
-    const imgs=[...document.querySelectorAll("#preview img")];
-    Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(r=>{img.onload=img.onerror=r})))
-      .finally(()=>setTimeout(()=>window.print(),150));
-  },250);
-}
-function setup(id){let c=$(id),x=c.getContext("2d"),down=false;c.blank=true;function resize(){let r=c.getBoundingClientRect(),q=devicePixelRatio||1;c.width=r.width*q;c.height=r.height*q;x.setTransform(q,0,0,q,0,0);x.lineWidth=2.2;x.lineCap="round"}resize();addEventListener("resize",resize);function pos(e){let r=c.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}c.onpointerdown=e=>{down=true;c.blank=false;let p=pos(e);x.beginPath();x.moveTo(...p)};c.onpointermove=e=>{if(!down)return;let p=pos(e);x.lineTo(...p);x.stroke()};c.onpointerup=()=>down=false;c.onpointerleave=()=>down=false}
-["sb","ss","sw1","sw2"].forEach(setup);function clr(id){let c=$(id);c.getContext("2d").clearRect(0,0,c.width,c.height);c.blank=true}
-</script>
-
-
-<div id="thumbCameraSection" class="card">
-  <h3>📷 અંગૂઠાની છાપ — Camera થી Capture કરો</h3>
-  <p class="muted">“Thumb Capture” દબાવીને અંગૂઠાની છાપનો ફોટો લો. iPhoneમાં Camera ખુલી શકે છે અને લીધેલો ફોટો Banakhatમાં મૂકાઈ જશે.</p>
-  <div class="thumb-cam-grid">
-    <div class="thumb-cam-box"><b>ખરીદનાર</b><input id="camThumbBuyer" type="file" accept="image/*" capture="environment" onchange="captureThumb(this,'camThumbBuyerPreview','thumbBuyerPhoto')"><div id="camThumbBuyerPreview"></div></div>
-    <div class="thumb-cam-box"><b>વેચનાર</b><input id="camThumbSeller" type="file" accept="image/*" capture="environment" onchange="captureThumb(this,'camThumbSellerPreview','thumbSellerPhoto')"><div id="camThumbSellerPreview"></div></div>
-  </div>
-</div>
-
-<script>
-window.thumbPhotoData={};
-function captureThumb(input, previewId, key){
-  const file=input.files && input.files[0];
-  const box=document.getElementById(previewId);
-  if(!file){window.thumbPhotoData[key]=""; if(box)box.innerHTML=""; return;}
-  const reader=new FileReader();
-  reader.onload=function(e){
-    window.thumbPhotoData[key]=e.target.result;
-    if(box) box.innerHTML="<img src='"+e.target.result+"' alt='Thumb impression'>";
-  };
-  reader.readAsDataURL(file);
-}
-function cameraThumbPrint(key,label){
-  const d=window.thumbPhotoData[key]||"";
-  return d ? "<div style='display:inline-block;text-align:center;margin:4px 12px'><div>"+label+"</div><img src='"+d+"' style='width:70px;height:60px;object-fit:contain;border:1px solid #999'></div>" : "";
-}
-function addCameraThumbsToPreview(){
-  const p=document.getElementById("preview"); if(!p)return;
-  const old=document.getElementById("camera-thumb-print-block"); if(old)old.remove();
-  const b=document.createElement("div");
-  b.id="camera-thumb-print-block";
-  b.style.cssText="text-align:center;margin-top:10px;page-break-inside:avoid";
-  b.innerHTML="<b>અંગૂઠાની છાપ — Camera Capture</b><div>"+
-    cameraThumbPrint("thumbBuyerPhoto","ખરીદનાર")+
-    cameraThumbPrint("thumbSellerPhoto","વેચનાર")+
-    cameraThumbPrint("thumbW1Photo","સાક્ષી 1")+
-    cameraThumbPrint("thumbW2Photo","સાક્ષી 2")+"</div>";
-  p.appendChild(b);
-}
-</script>
-</body></html>
+const $=x=>document.getElementById(x),V=x=>($(x).value||"").trim(),M=x=>new Intl.NumberFormat("en-IN",{maximumFractionDigits:2}).format(Number(x)||0);
+function land(){let g=+V("guntha")||0;$("acre").value=g/40||"";$("total").value=Math.round(g*(+V("rate")||0));bal()}
+function acres(){let a=+V("acre")||0;$("guntha").value=a*40;land()}
+function bal(){$("rem").value=Math.max(0,(+V("total")||0)-(+V("adv")||0));}
+function addm(s,m){let d=new Date(s+"T00:00:00");d.setMonth(d.getMonth()+m);return d.toISOString().slice(0,10)}
+function makeInst(){let n=Math.min(30,Math.max(1,+V("n")||1)),b=+$("rem").value||0,e=Math.floor(b/n*100)/100,base=V("date"),h="";for(let i=1;i<=n;i++){let a=i==n?b-e*(n-1):e;h+=`<tr><td>${i}</td><td><input class="ia" type="number" value="${a.toFixed(2)}"></td><td><input class="id" type="date" value="${base?addm(base,i):""}"></td><td><button onclick="this.closest('tr').remove();ren()">🗑️</button></td></tr>`}$("ib").innerHTML=h}
+function ren(){[...$("ib").rows].forEach((r,i)=>r.cells[0].textContent=i+1);$("n").value=$("ib").rows.length}
+function setup(id){let c=$(id);c.width=700;c.height=280;let x=c.getContext("2d"),d=false;c.dataset.empty=1;x.lineWidth=4;x.lineCap="round";let p=e=>{let r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*c.width/r.width,y:(e.clientY-r.top)*c.height/r.height}};c.onpointerdown=e=>{d=true;c.setPointerCapture(e.pointerId);c.dataset.empty=0;let q=p(e);x.beginPath();x.moveTo(q.x,q.y)};c.onpointermove=e=>{if(!d)return;let q=p(e);x.lineTo(q.x,q.y);x.stroke()};c.onpointerup=()=>d=false;c.onpointercancel=()=>d=false}
+function clr(id){let c=$(id);c.getContext("2d").clearRect(0,0,c.width,c.height);c.dataset.empty=1}
+function sig(id){let c=$(id);return c.dataset.empty?"":c.toDataURL()}
+function E(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",""":"&quot;"}[c]))}
+function preview(){let g=+V("guntha")||0,a=g/40,t=+$("total").value||0,ad=+$("adv").value||0,r=[...$("ib").rows].map((x,i)=>`<tr><td>${i+1}</td><td>₹ ${M(x.querySelector(".ia").value)}</td><td>${x.querySelector(".id").value||"-"}</td></tr>`).join("");let S=id=>{let d=sig(id);return d?`<img src="${d}">`:""};$("paper").innerHTML=`<div style="text-align:center;border-bottom:2px solid #222"><h2>જમીન બાનાખત</h2><p>આજ રોજ જમીન વેચાણ માટે બાનાખત કરવામાં આવે છે.</p></div><div class="pvgrid"><div class="pvbox"><b>ખરીદનાર</b><br>${E(V("buyer"))}<br>પિતા: ${E(V("bf"))}<br>${E(V("ba"))}<br>મો.: ${E(V("bm"))}</div><div class="pvbox"><b>વેચનાર</b><br>${E(V("seller"))}<br>પિતા: ${E(V("sf"))}<br>${E(V("sa"))}<br>મો.: ${E(V("sm"))}</div><div class="pvbox"><b>જમીન</b><br>ગામ: ${E(V("village"))}, તાલુકો: ${E(V("taluka"))}, જિલ્લો: ${E(V("district"))}<br>સર્વે: ${E(V("survey"))}<br>${M(g)} ગુંઠા = ${a.toFixed(4)} એકર<br>${E(V("landdetail"))}</div><div class="pvbox"><b>કિંમત</b><br>કુલ: ₹ ${M(t)}<br>બાનાપેટે: ₹ ${M(ad)}<br>બાકી: ₹ ${M(t-ad)}<br>તારીખ: ${E(V("date"))}</div></div><p>વેચનાર ઉપરોક્ત જમીન ખરીદનારને કુલ ₹ ${M(t)} માં વેચવા સંમત છે. ₹ ${M(ad)} બાનાપેટે પ્રાપ્ત થયેલ છે અને બાકી રકમ નીચેના હપ્તાઓ મુજબ ચૂકવવાની રહેશે.</p><table class="pvtable"><thead><tr><th>હપ્તા</th><th>રકમ</th><th>તારીખ</th></tr></thead><tbody>${r}</tbody></table>${V("terms")?`<p><b>ખાસ શરતો:</b> ${E(V("terms"))}</p>`:""}<div class="pvsig"><div><b>ખરીદનારની સહી</b>${S("s1")}</div><div><b>વેચનારની સહી</b>${S("s2")}</div><div><b>સાક્ષી 1 ની સહી</b>${S("s3")}</div><div><b>સાક્ષી 2 ની સહી</b>${S("s4")}</div></div>`}
+function pdf(){preview();setTimeout(()=>window.print(),200)}
+async function jpg(){preview();await new Promise(r=>setTimeout(r,100));if(!window.html2canvas){alert("JPG માટે internet ચાલુ રાખો.");return}let c=await html2canvas($("paper"),{scale:2,backgroundColor:"#fff"}),a=document.createElement("a");a.download="banakhat.jpg";a.href=c.toDataURL("image/jpeg",.95);a.click()}
+window.onload=()=>{["s1","s2","s3","s4"].forEach(setup);$("date").value=new Date().toISOString().slice(0,10);bal();makeInst();preview()}
+</script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script></body></html>
