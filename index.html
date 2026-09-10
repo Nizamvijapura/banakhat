@@ -387,93 +387,101 @@ function clearPhoto(kind){
 function photo(kind){return photoData[kind]||""}
 
 
+
 function makePreview(){
- let g=+V("guntha")||0,t=+V("total")||0,ad=+V("adv")||0,b=Math.max(0,t-ad);
- let rows=[...$("instBody").rows].map((r,i)=>`<tr><td>${i+1}</td><td>₹ ${M(r.querySelector(".ia").value)}<br><small>${E(guAmount(r.querySelector(".ia").value))}</small></td><td>${fmtDate(r.querySelector(".id").value||"-")}</td></tr>`).join("");
- let S=id=>{let d=sig(id);return d?`<img src="${d}" style="height:58px;max-width:100%;object-fit:contain">`:"________________"};
- let P=kind=>{let d=photo(kind);return d?`<img src="${d}" class="photo-side">`:""};
- $("preview").innerHTML=`
- <div class="a4page">
-   <div class="pvhead"><h1><b>જમીન બાનાખત</b></h1><p>આજ રોજ જમીન ખરીદ-વેચાણ માટે બાનાખત કરવામાં આવે છે.</p><p><b>બાનાખત તારીખ: ${fmtDate(V("date"))}</b></p></div>
-   <div class="pvgrid">
-    <div class="pvbox pvperson"><div class="photo-side">${P("buyer")}</div><b style="font-size:20px">ખરીદનાર (લેનાર)</b><br>નામ: ${E(V("buyer"))}<br>સરનામું: ${E(V("ba"))}<br>મો.: ${E(V("bm"))}</div>
-    <div class="pvbox pvperson"><div class="photo-side">${P("seller")}</div><b style="font-size:20px">વેચનાર</b><br>નામ: ${E(V("seller"))}<br>સરનામું: ${E(V("sa"))}<br>મો.: ${E(V("sm"))}</div>
-    <div class="pvbox"><b>જમીનની વિગતો</b><br>ગામ: ${E(V("village"))}<br>તાલુકો: ${E(V("taluka"))}<br>જિલ્લો: ${E(V("district"))}<br>સર્વે/બ્લોક: ${E(V("survey"))}<br>વિસ્તાર: ${M(g)} ગુંઠા = ${(g/40).toFixed(4)} એકર<br>${E(V("landdetail"))}</div>
-    <div class="pvbox"><b>બાનાખતની કિંમત</b><br>કુલ કિંમત: <b style="font-size:20px">₹ ${M(t)}</b><div class="amount-words">શબ્દોમાં: ${E(guAmount(t))}</div><br>બાનાપેટે: <b>₹ ${M(ad)}</b><div class="amount-words">શબ્દોમાં: ${E(guAmount(ad))}</div><br>બાકી: <b>₹ ${M(b)}</b><div class="amount-words">શબ્દોમાં: ${E(guAmount(b))}</div><br>છેલ્લી તારીખ: ${fmtDate(V("due"))}</div>
-   </div>
-   <div class="pvclause">
-    <p style="margin-top:0"><b>બાનાખતનો વિગતવાર કરાર:</b></p>
-    <p>આજ રોજ ઉપરોક્ત તારીખે હું વેચનાર, ઉપરોક્ત જમીન મારી માલિકીની અને કાયદેસર હકવાળી હોવાનું જણાવી, આ જમીન ખરીદનારને કુલ <b>₹ ${M(t)}</b> (<b>${E(guAmount(t))}</b>) માં વેચવા માટે સ્વેચ્છાએ સંમત થયો/થઈ છું. ખરીદનારએ પણ ઉપરોક્ત જમીન, તેની હદ, વિસ્તાર, દસ્તાવેજી વિગતો તથા વેચનાર દ્વારા જણાવવામાં આવેલી માહિતી સમજીને આ જમીન ખરીદવાની સંમતિ આપી છે.</p>
-    <p>આજરોજ ખરીદનાર તરફથી વેચનારને બાનાપેટે/એડવાન્સ તરીકે <b>₹ ${M(ad)}</b> (<b>${E(guAmount(ad))}</b>) ચૂકવવામાં આવેલ છે, જે રકમ વેચનારએ સ્વીકારી હોવાનું માનવામાં આવે છે. કુલ વેચાણ કિંમતમાંથી બાકી રહેતી <b>₹ ${M(b)}</b> (<b>${E(guAmount(b))}</b>) રકમ નીચે દર્શાવેલ હપ્તાઓ મુજબ ચૂકવવાની રહેશે.</p>
-    <p>ખરીદનારએ આ જમીન કોઈપણ દબાણ, ધમકી, લાલચ કે ગેરસમજ વિના, પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં, સ્વેચ્છાએ ખરીદવાની સંમતિ આપી છે. વેચનારએ પણ કોઈપણ દબાણ કે બળજબરી વિના પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં આ બાનાખત કરી છે.</p>
-    <p>વેચનાર ખાતરી આપે છે કે ઉપરોક્ત જમીન અંગેનો માલિકી હક તથા વેચાણ કરવાનો અધિકાર પોતે ધરાવે છે. જમીન ઉપર કોઈ ગીરો, બોજો, કોર્ટ કેસ, દાવો, કબજાનો વિવાદ, સરકારી બાકી, અગાઉનું વેચાણ/બાનાખત અથવા અન્ય કોઈ હક-દાવો હોય અને તે બાબત ખરીદનારથી છુપાવવામાં આવી હોય તો તેની જવાબદારી વેચનારની રહેશે.</p>
-    <p>વેચનાર જમીનના મૂળ હક-દસ્તાવેજો તથા જરૂરી કાયદેસર દસ્તાવેજી પ્રક્રિયામાં ખરીદનારને સહકાર આપશે. સંપૂર્ણ વેચાણ કિંમત પ્રાપ્ત થયા બાદ, લાગુ પડતા કાયદા અને જરૂરી પ્રક્રિયા મુજબ વેચાણ દસ્તાવેજ/રજિસ્ટર્ડ દસ્તાવેજ કરાવવા માટે વેચનાર હાજર રહી જરૂરી સહી તથા કાર્યવાહી કરશે.</p>
-   </div>
- </div>
- <div class="a4page page-break">
-   <div class="pvhead"><h1><b>જમીન બાનાખત — હપ્તા અને શરતો</b></h1><p>બાનાખત તારીખ: <b>${fmtDate(V("date"))}</b></p></div>
-   <h2 style="font-size:21px;margin:5px 0"><b>હપ્તાની વિગતો</b></h2>
-   <table class="pvtable"><thead><tr><th>હપ્તા નં.</th><th>રકમ (₹)</th><th>ચૂકવણી તારીખ</th></tr></thead><tbody>${rows}</tbody></table>
-   <div class="pvclause">
-    <p><b>બાનાખતની અન્ય શરતો:</b></p>
-    <p>હપ્તાની રકમ અને તારીખો ઉપરની યાદીમાં દર્શાવેલ છે. બંને પક્ષોની પરસ્પર સંમતિથી, જો જરૂરી હોય તો, હપ્તાની તારીખ અથવા રકમમાં લેખિત રીતે ફેરફાર કરી શકાશે.</p>
-    <p>જમીનનો કબજો, વેચાણ દસ્તાવેજ અને બાકી રહેલી કાયદેસર પ્રક્રિયા અંગેની શરતો બંને પક્ષોની સંમતિ તથા લાગુ કાયદા મુજબ રહેશે.</p>
-    <p>બંને પક્ષોએ આ બાનાખતની તમામ શરતો વાંચી/વાંચાવી, સમજી, પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં, કોઈપણ દબાણ કે બળજબરી વિના, સ્વેચ્છાએ સ્વીકારી છે અને નીચે સાક્ષીઓની હાજરીમાં સહી કરી છે.</p>
-    ${V("terms")?`<p><b>ખાસ શરતો / અન્ય સંમતિ:</b><br>${E(V("terms"))}</p>`:""}
-   </div>
-   <div class="pvsig" style="margin-top:16px">
-    <div><b>ખરીદનારની સહી</b><br>${S("sb")}</div>
-    <div><b>વેચનારની સહી</b><br>${S("ss")}</div>
-    <div><b>સાક્ષી 1 ની સહી</b><br>${S("sw1")}</div>
-    <div><b>સાક્ષી 2 ની સહી</b><br>${S("sw2")}</div>
-   </div>
-   <p class="pdf-note">આ બાનાખતનું લખાણ પક્ષકારોની આપેલી માહિતીના આધારે તૈયાર કરવામાં આવ્યું છે.</p>
- </div>`;
- return $("preview").innerHTML;
+  let g=+V("guntha")||0, t=+V("total")||0, ad=+V("adv")||0, b=Math.max(0,t-ad);
+  let rows=[...$("instBody").rows].map((r,i)=>`<tr><td>${i+1}</td><td>₹ ${M(r.querySelector(".ia").value)}<br><small>${E(guAmount(r.querySelector(".ia").value))}</small></td><td>${fmtDate(r.querySelector(".id").value||"-")}</td></tr>`).join("");
+  let S=id=>{let d=sig(id);return d?`<img src="${d}" style="height:58px;max-width:100%;object-fit:contain">`:"________________"};
+  let P=kind=>{let d=photo(kind);return d?`<img src="${d}" class="photo-side">`:""};
+  $("preview").innerHTML=`
+  <div class="a4page">
+    <div class="pvhead"><h1><b>જમીન બાનાખત</b></h1><p>આજ રોજ જમીન ખરીદ-વેચાણ માટે બાનાખત કરવામાં આવે છે.</p><p><b>બાનાખત તારીખ: ${fmtDate(V("date"))}</b></p></div>
+    <div class="pvgrid">
+      <div class="pvbox pvperson"><div class="photo-side">${P("buyer")}</div><b style="font-size:20px">ખરીદનાર (લેનાર)</b><br>નામ: ${E(V("buyer"))}<br>સરનામું: ${E(V("ba"))}<br>મો.: ${E(V("bm"))}</div>
+      <div class="pvbox pvperson"><div class="photo-side">${P("seller")}</div><b style="font-size:20px">વેચનાર</b><br>નામ: ${E(V("seller"))}<br>સરનામું: ${E(V("sa"))}<br>મો.: ${E(V("sm"))}</div>
+      <div class="pvbox"><b>જમીનની વિગતો</b><br>ગામ: ${E(V("village"))}<br>તાલુકો: ${E(V("taluka"))}<br>જિલ્લો: ${E(V("district"))}<br>સર્વે/બ્લોક: ${E(V("survey"))}<br>વિસ્તાર: ${M(g)} ગુંઠા = ${(g/40).toFixed(4)} એકર<br>${E(V("landdetail"))}</div>
+      <div class="pvbox"><b>બાનાખતની કિંમત</b><br>કુલ કિંમત: <b style="font-size:20px">₹ ${M(t)}</b><div class="amount-words">શબ્દોમાં: ${E(guAmount(t))}</div><br>બાનાપેટે: <b>₹ ${M(ad)}</b><div class="amount-words">શબ્દોમાં: ${E(guAmount(ad))}</div><br>બાકી: <b>₹ ${M(b)}</b><div class="amount-words">શબ્દોમાં: ${E(guAmount(b))}</div><br>છેલ્લી તારીખ: ${fmtDate(V("due"))}</div>
+    </div>
+    <div class="pvclause">
+      <p><b>બાનાખતનો વિગતવાર કરાર:</b></p>
+      <p>આજ રોજ ઉપરોક્ત તારીખે હું વેચનાર, ઉપરોક્ત જમીન મારી માલિકીની અને કાયદેસર હકવાળી હોવાનું જણાવી, આ જમીન ખરીદનારને કુલ <b>₹ ${M(t)}</b> (<b>${E(guAmount(t))}</b>) માં વેચવા માટે સ્વેચ્છાએ સંમત થયો/થઈ છું. ખરીદનારએ પણ ઉપરોક્ત જમીન, તેની હદ, વિસ્તાર, દસ્તાવેજી વિગતો તથા વેચનાર દ્વારા જણાવવામાં આવેલી માહિતી સમજીને આ જમીન ખરીદવાની સંમતિ આપી છે.</p>
+      <p>આજરોજ ખરીદનાર તરફથી વેચનારને બાનાપેટે/એડવાન્સ તરીકે <b>₹ ${M(ad)}</b> (<b>${E(guAmount(ad))}</b>) ચૂકવવામાં આવેલ છે. કુલ વેચાણ કિંમતમાંથી બાકી રહેતી <b>₹ ${M(b)}</b> (<b>${E(guAmount(b))}</b>) રકમ નીચે દર્શાવેલ હપ્તાઓ મુજબ ચૂકવવાની રહેશે.</p>
+      <p>ખરીદનારએ આ જમીન કોઈપણ દબાણ, ધમકી, લાલચ કે ગેરસમજ વિના, પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં, સ્વેચ્છાએ ખરીદવાની સંમતિ આપી છે. વેચનારએ પણ કોઈપણ દબાણ કે બળજબરી વિના પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં આ બાનાખત કરી છે.</p>
+      <p>વેચનાર ખાતરી આપે છે કે ઉપરોક્ત જમીન અંગેનો માલિકી હક તથા વેચાણ કરવાનો અધિકાર પોતે ધરાવે છે. જમીન ઉપર કોઈ ગીરો, બોજો, કોર્ટ કેસ, દાવો, કબજાનો વિવાદ, સરકારી બાકી, અગાઉનું વેચાણ/બાનાખત અથવા અન્ય કોઈ હક-દાવો હોય અને તે બાબત ખરીદનારથી છુપાવવામાં આવી હોય તો તેની જવાબદારી વેચનારની રહેશે.</p>
+      <p>વેચનાર જમીનના મૂળ હક-દસ્તાવેજો તથા જરૂરી કાયદેસર દસ્તાવેજી પ્રક્રિયામાં ખરીદનારને સહકાર આપશે. સંપૂર્ણ વેચાણ કિંમત પ્રાપ્ત થયા બાદ, લાગુ પડતા કાયદા અને જરૂરી પ્રક્રિયા મુજબ વેચાણ દસ્તાવેજ/રજિસ્ટર્ડ દસ્તાવેજ કરાવવા માટે વેચનાર હાજર રહી જરૂરી સહી તથા કાર્યવાહી કરશે.</p>
+    </div>
+  </div>
+  <div class="a4page page-break">
+    <div class="pvhead"><h1><b>જમીન બાનાખત — હપ્તા અને શરતો</b></h1><p>બાનાખત તારીખ: <b>${fmtDate(V("date"))}</b></p></div>
+    <h2 style="font-size:21px;margin:5px 0"><b>હપ્તાની વિગતો</b></h2>
+    <table class="pvtable"><thead><tr><th>હપ્તા નં.</th><th>રકમ (₹)</th><th>ચૂકવણી તારીખ</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="pvclause">
+      <p><b>બાનાખતની અન્ય શરતો:</b></p>
+      <p>હપ્તાની રકમ અને તારીખો ઉપરની યાદીમાં દર્શાવેલ છે. બંને પક્ષોની પરસ્પર સંમતિથી, જો જરૂરી હોય તો, હપ્તાની તારીખ અથવા રકમમાં લેખિત રીતે ફેરફાર કરી શકાશે.</p>
+      <p>જમીનનો કબજો, વેચાણ દસ્તાવેજ અને બાકી રહેલી કાયદેસર પ્રક્રિયા અંગેની શરતો બંને પક્ષોની સંમતિ તથા લાગુ કાયદા મુજબ રહેશે.</p>
+      <p>બંને પક્ષોએ આ બાનાખતની તમામ શરતો વાંચી/વાંચાવી, સમજી, પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં, કોઈપણ દબાણ કે બળજબરી વિના, સ્વેચ્છાએ સ્વીકારી છે અને નીચે સાક્ષીઓની હાજરીમાં સહી કરી છે.</p>
+      ${V("terms")?`<p><b>ખાસ શરતો / અન્ય સંમતિ:</b><br>${E(V("terms"))}</p>`:""}
+    </div>
+    <div class="pvsig" style="margin-top:16px">
+      <div><b>ખરીદનારની સહી</b><br>${S("sb")}</div>
+      <div><b>વેચનારની સહી</b><br>${S("ss")}</div>
+      <div><b>સાક્ષી 1 ની સહી</b><br>${S("sw1")}</div>
+      <div><b>સાક્ષી 2 ની સહી</b><br>${S("sw2")}</div>
+    </div>
+  </div>`;
+  return $("preview");
 }
 function openPreview(){
- makePreview();
- $("previewLarge").innerHTML=$("preview").innerHTML;
- $("previewModal").classList.add("open");
- $("previewModal").setAttribute("aria-hidden","false");
- setZoom(1);
+  makePreview();
+  $("previewLarge").innerHTML=$("preview").innerHTML;
+  $("previewModal").classList.add("open");
+  $("previewModal").setAttribute("aria-hidden","false");
+  setZoom(1);
 }
 function closePreview(){
- $("previewModal").classList.remove("open");
- $("previewModal").setAttribute("aria-hidden","true");
+  $("previewModal").classList.remove("open");
+  $("previewModal").setAttribute("aria-hidden","true");
 }
 let previewZoom=1;
 function setZoom(z){
- previewZoom=Math.max(.5,Math.min(1.6,z));
- $("previewLarge").style.transform=`scale(${previewZoom})`;
- $("previewLarge").style.width=`${100/previewZoom}%`;
- $("zoomText").textContent=Math.round(previewZoom*100)+"%";
+  previewZoom=Math.max(.5,Math.min(1.5,z));
+  const el=$("previewLarge");
+  el.style.transform=`scale(${previewZoom})`;
+  el.style.transformOrigin="top center";
+  $("zoomText").textContent=Math.round(previewZoom*100)+"%";
 }
 function zoomPreview(dir){setZoom(previewZoom+dir*.1)}
-function savePDF(){
- makePreview();
- setTimeout(async()=>{
-   if(!window.html2canvas || !window.jspdf){alert("PDF માટે જરૂરી library લોડ થઈ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");return}
-   const {jsPDF}=window.jspdf;
-   const pages=[...document.querySelectorAll("#preview .a4page")];
-   const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
-   for(let i=0;i<pages.length;i++){
-     if(i>0)pdf.addPage("a4","portrait");
-     const canvas=await html2canvas(pages[i],{scale:2,useCORS:true,backgroundColor:"#fff"});
-     pdf.addImage(canvas.toDataURL("image/jpeg",.98),"JPEG",0,0,210,297);
-   }
-   pdf.save("banakhat-"+new Date().toISOString().slice(0,10)+".pdf");
- },250);
+
+async function savePDF(){
+  try{
+    makePreview();
+    const pages=[...document.querySelectorAll("#preview .a4page")];
+    if(pages.length!==2){alert("બાનાખતના 2 A4 પેજ તૈયાર થયા નથી.");return}
+    if(!window.html2canvas || !window.jspdf){alert("PDF માટે library લોડ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");return}
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait",compress:true});
+    for(let i=0;i<2;i++){
+      if(i>0)pdf.addPage("a4","portrait");
+      const canvas=await html2canvas(pages[i],{scale:2,useCORS:true,backgroundColor:"#fff",logging:false});
+      pdf.addImage(canvas.toDataURL("image/jpeg",.96),"JPEG",0,0,210,297);
+    }
+    pdf.save("banakhat-"+new Date().toISOString().slice(0,10)+".pdf");
+  }catch(err){console.error(err);alert("PDF બનાવવામાં સમસ્યા આવી. ફરી પ્રયાસ કરો.");}
 }
 async function saveJPG(){
- makePreview();await new Promise(r=>setTimeout(r,120));
- if(!window.html2canvas){alert("JPG બનાવવા માટે જરૂરી library લોડ થઈ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");return}
- const pages=[...document.querySelectorAll("#preview .a4page")];
- for(let i=0;i<pages.length;i++){
-   const canvas=await html2canvas(pages[i],{scale:2,backgroundColor:"#fff",useCORS:true});
-   const a=document.createElement("a");a.download=`banakhat-page-${i+1}.jpg`;a.href=canvas.toDataURL("image/jpeg",.96);a.click();
-   await new Promise(r=>setTimeout(r,150));
- }
+  try{
+    makePreview();
+    if(!window.html2canvas){alert("JPG માટે library લોડ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");return}
+    const pages=[...document.querySelectorAll("#preview .a4page")];
+    for(let i=0;i<2;i++){
+      const canvas=await html2canvas(pages[i],{scale:2,useCORS:true,backgroundColor:"#fff",logging:false});
+      const a=document.createElement("a");
+      a.download=`banakhat-page-${i+1}.jpg`;
+      a.href=canvas.toDataURL("image/jpeg",.96);
+      document.body.appendChild(a);a.click();a.remove();
+      await new Promise(r=>setTimeout(r,250));
+    }
+  }catch(err){console.error(err);alert("JPG બનાવવામાં સમસ્યા આવી. ફરી પ્રયાસ કરો.");}
 }
 
 $("date").value=new Date().toISOString().slice(0,10);
@@ -481,6 +489,8 @@ $("date").value=new Date().toISOString().slice(0,10);
 setupPhoto("buyer");setupPhoto("seller");
 balanceCalc();makeInstallments();makePreview();
 </script>
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
