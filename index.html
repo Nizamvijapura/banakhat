@@ -250,23 +250,47 @@ const V=id=>($(id).value||"").trim();
 const M=n=>new Intl.NumberFormat("en-IN",{maximumFractionDigits:2}).format(Number(n)||0);
 const E=s=>String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 
-const guOnes=["શૂન્ય","એક","બે","ત્રણ","ચાર","પાંચ","છ","સાત","આઠ","નવ","દસ","અગિયાર","બાર","તેર","ચૌદ","પંદર","સોળ","સત્તર","અઢાર","ઓગણીસ"];
-const guTens=["","","વીસ","ત્રીસ","ચાલીસ","પચાસ","સાઠ","સિત્તેર","એંસી","નેવું"];
-function guNum(n){
- n=Math.floor(Number(n)||0);
- if(n<20)return guOnes[n];
- if(n<100)return guTens[Math.floor(n/10)]+(n%10?" "+guOnes[n%10]:"");
- if(n<1000)return guOnes[Math.floor(n/100)]+" સો"+(n%100?" "+guNum(n%100):"");
- if(n<100000)return guNum(Math.floor(n/1000))+" હજાર"+(n%1000?" "+guNum(n%1000):"");
- if(n<10000000)return guNum(Math.floor(n/100000))+" લાખ"+(n%100000?" "+guNum(n%100000):"");
- return guNum(Math.floor(n/10000000))+" કરોડ"+(n%10000000?" "+guNum(n%10000000):"");
+const guSmall = [
+"શૂન્ય","એક","બે","ત્રણ","ચાર","પાંચ","છ","સાત","આઠ","નવ","દસ",
+"અગિયાર","બાર","તેર","ચૌદ","પંદર","સોળ","સત્તર","અઢાર","ઓગણીસ","વીસ",
+"એકવીસ","બાવીસ","તેવીસ","ચોવીસ","પચ્ચીસ","છવ્વીસ","સત્તાવીસ","અઠ્ઠાવીસ","ઓગણત્રીસ","ત્રીસ",
+"એકત્રીસ","બત્રીસ","તેત્રીસ","ચોત્રીસ","પાંત્રીસ","છત્રીસ","સડત્રીસ","અડત્રીસ","ઓગણચાલીસ","ચાલીસ",
+"એકતાલીસ","બેતાલીસ","ત્રેતાલીસ","ચુંમાલીસ","પિસ્તાલીસ","છેતાલીસ","સુડતાલીસ","અડતાલીસ","ઓગણપચાસ","પચાસ",
+"એકાવન","બાવન","ત્રેપન","ચોપન","પંચાવન","છપ્પન","સત્તાવન","અઠ્ઠાવન","ઓગણસાઠ","સાઠ",
+"એકસઠ","બાસઠ","ત્રેસઠ","ચોસઠ","પાંસઠ","છાસઠ","સડસઠ","અડસઠ","ઓગણસિત્તેર","સિત્તેર",
+"એકોતેર","બોતેર","તોતેર","ચુમોતેર","પંચોતેર","છોતેર","સિત્યોતેર","ઇઠ્યોતેર","ઓગણએંસી","એંસી",
+"એક્યાસી","બ્યાસી","ત્યાસી","ચોર્યાસી","પંચાસી","છ્યાસી","સિત્યાસી","ઠ્યાસી","નેવ્યાસી","નેવું",
+"એકાણું","બાણું","ત્રાણું","ચોરાણું","પંચાણું","છન્નું","સત્તાણું","અઠ્ઠાણું","નવ્વાણું"
+];
+
+function guBelow1000(n){
+  n=Math.floor(Number(n)||0);
+  if(n<100) return guSmall[n];
+  const h=Math.floor(n/100), r=n%100;
+  return guSmall[h]+"સો"+(r?" "+guSmall[r]:"");
 }
-function guAmount(n){n=Math.round(Number(n)||0);return guNum(n)+" રૂપિયા પુરા";}
-function fmtDate(s){
- if(!s)return "-";
- const p=String(s).split("-");
- if(p.length!==3)return s;
- return `${p[2]}/${p[1]}/${p[0]}`;
+function guNum(n){
+  n=Math.floor(Number(n)||0);
+  if(n===0) return "શૂન્ય";
+  const parts=[];
+  if(n>=10000000){
+    const c=Math.floor(n/10000000); n%=10000000;
+    parts.push(guNum(c)+" કરોડ");
+  }
+  if(n>=100000){
+    const l=Math.floor(n/100000); n%=100000;
+    parts.push(guBelow1000(l)+" લાખ");
+  }
+  if(n>=1000){
+    const k=Math.floor(n/1000); n%=1000;
+    parts.push(guBelow1000(k)+" હજાર");
+  }
+  if(n>0) parts.push(guBelow1000(n));
+  return parts.join(" ");
+}
+function guAmount(n){
+  n=Math.round(Number(n)||0);
+  return guNum(n)+" રૂપિયા પુરા";
 }
 function landCalc(){
  let g=+V("guntha")||0,r=+V("rate")||0;
