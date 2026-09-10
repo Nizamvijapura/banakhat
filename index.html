@@ -45,6 +45,42 @@ canvas.signature{display:block;width:100%;height:105px;background:#fff;border:1p
 @media(max-width:900px){.grid{grid-template-columns:1fr}.inst,.sign{grid-column:auto}.header h1{font-size:23px}#preview{width:100%;min-height:auto;padding:15px}}
 @media print{body{background:#fff}.wrap>.header,.wrap>.grid,.actions,.preview-title{display:none!important}#preview{width:210mm;min-height:297mm;margin:0;padding:10mm;border:0;box-shadow:none}@page{size:A4;margin:0}}
 </style>
+
+<style>
+/* Final A4 large-print layout */
+body{font-size:18px}
+.header h1{font-size:32px!important;font-weight:900}
+.header p{font-size:18px!important}
+.card h2{font-size:22px!important;font-weight:900!important}
+label{font-size:17px!important;font-weight:800!important}
+input,textarea{font-size:18px!important;padding:11px 12px!important}
+.result{font-size:20px!important}
+.note{font-size:16px!important}
+button{font-size:17px!important}
+#preview{font-size:18px!important;line-height:1.75!important;padding:13mm!important}
+.pvhead h1{font-size:28px!important;font-weight:900!important}
+.pvhead p{font-size:17px!important}
+.pvbox{font-size:17px!important;padding:9px!important}
+.pvbox b{font-size:18px!important;font-weight:900!important}
+.pvtable th,.pvtable td{font-size:17px!important;padding:8px!important}
+.pvtable th{font-weight:900!important}
+.pvsig>div{font-size:17px!important;min-height:105px!important;padding:9px!important}
+.pvsig b{font-size:19px!important;font-weight:900!important}
+#preview p{font-size:18px!important}
+#preview .banakhat-clause{font-size:18px!important;line-height:1.85!important}
+@media print{
+  body{font-size:18px}
+  #preview{width:210mm;min-height:297mm;padding:12mm!important;font-size:18px!important}
+  .pvhead h1{font-size:28px!important}
+  .pvbox{font-size:17px!important}
+  .pvtable th,.pvtable td{font-size:17px!important}
+  #preview p{font-size:18px!important;line-height:1.75!important}
+  .banakhat-clause{font-size:18px!important;line-height:1.85!important}
+  .pvsig>div{font-size:17px!important;min-height:105px!important}
+  /* Allow the agreement to naturally flow to 2 A4 pages */
+}
+</style>
+
 </head>
 <body>
 <div class="wrap">
@@ -143,14 +179,14 @@ function makePreview(){
  let g=+V("guntha")||0,a=g/40,t=+V("total")||0,ad=+V("adv")||0,b=Math.max(0,t-ad);
  let rows=[...$("instBody").rows].map((r,i)=>`<tr><td>${i+1}</td><td>₹ ${M(r.querySelector(".ia").value)}</td><td>${E(r.querySelector(".id").value||"-")}</td></tr>`).join("");
  let S=id=>{let d=sig(id);return d?`<img src="${d}">`:"________________"};
- $("preview").innerHTML=`<div class="pvhead"><h1>જમીન બાનાખત</h1><p>આજ રોજ જમીન ખરીદ-વેચાણ માટે બાનાખત કરવામાં આવે છે.</p></div>
+ $("preview").innerHTML=`<div class="pvhead"><h1><b>જમીન બાનાખત</b></h1><p>આજ રોજ જમીન ખરીદ-વેચાણ માટે બાનાખત કરવામાં આવે છે.</p></div>
  <div class="pvgrid">
- <div class="pvbox"><b>ખરીદનાર:</b> ${E(V("buyer"))}<br>પિતાનું નામ: ${E(V("bf"))}<br>સરનામું: ${E(V("ba"))}<br>મો.: ${E(V("bm"))}</div>
- <div class="pvbox"><b>વેચનાર:</b> ${E(V("seller"))}<br>પિતાનું નામ: ${E(V("sf"))}<br>સરનામું: ${E(V("sa"))}<br>મો.: ${E(V("sm"))}</div>
+ <div class="pvbox"><b style="font-size:20px">ખરીદનાર:</b> ${E(V("buyer"))}<br>પિતાનું નામ: ${E(V("bf"))}<br>સરનામું: ${E(V("ba"))}<br>મો.: ${E(V("bm"))}</div>
+ <div class="pvbox"><b style="font-size:20px">વેચનાર:</b> ${E(V("seller"))}<br>પિતાનું નામ: ${E(V("sf"))}<br>સરનામું: ${E(V("sa"))}<br>મો.: ${E(V("sm"))}</div>
  <div class="pvbox"><b>જમીન:</b> ગામ ${E(V("village"))}, તાલુકો ${E(V("taluka"))}, જિલ્લો ${E(V("district"))}<br>સર્વે/બ્લોક: ${E(V("survey"))}<br>વિસ્તાર: ${M(g)} ગુંઠા = ${(g/40).toFixed(4)} એકર<br>${E(V("landdetail"))}</div>
  <div class="pvbox"><b>બાનાખત:</b> તારીખ ${E(V("date"))}<br>કુલ કિંમત: ₹ ${M(t)}<br>બાનાપેટે: ₹ ${M(ad)}<br>બાકી: ₹ ${M(b)}<br>છેલ્લી તારીખ: ${E(V("due"))}</div>
  </div>
- <div style="border:1px solid #555;padding:9px;margin-top:8px;line-height:1.75;font-size:12px">
+ <div class="banakhat-clause" style="border:1px solid #555;padding:10px;margin-top:8px;line-height:1.85;font-size:18px">
  <p style="margin-top:0"><b>બાનાખતનો વિગતવાર કરાર:</b></p>
  <p>આજ રોજ ઉપરોક્ત તારીખે હું વેચનાર, ઉપરોક્ત જમીન મારી માલિકીની અને કાયદેસર હકવાળી હોવાનું જણાવી, આ જમીન ખરીદનારને કુલ <b>₹ ${M(t)}</b> (રૂપિયા ${M(t)} પુરા) માં વેચવા માટે સ્વેચ્છાએ સંમત થયો/થઈ છું. ખરીદનારએ પણ ઉપરોક્ત જમીન, તેની હદ, વિસ્તાર, દસ્તાવેજી વિગતો તથા વેચનાર દ્વારા જણાવવામાં આવેલી માહિતી સમજીને આ જમીન ખરીદવાની સંમતિ આપી છે.</p>
  <p>આજરોજ ખરીદનાર તરફથી વેચનારને બાનાપેટે/એડવાન્સ તરીકે <b>₹ ${M(ad)}</b> ચૂકવવામાં આવેલ છે, જે રકમ વેચનારએ સ્વીકારી હોવાનું માનવામાં આવે છે. કુલ વેચાણ કિંમતમાંથી બાકી રહેતી <b>₹ ${M(b)}</b> રકમ નીચે દર્શાવેલ હપ્તાઓ મુજબ ચૂકવવાની રહેશે.</p>

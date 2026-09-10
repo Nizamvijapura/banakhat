@@ -1,1 +1,1 @@
-GitHub Pages: upload the updated index.html and keep manifest.webmanifest in the repository root.
+GitHub Pages માટે index.html, manifest.webmanifest ને repository ના root માં upload કરો.
