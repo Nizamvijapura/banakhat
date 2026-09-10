@@ -1,9 +1,1 @@
-{
-  "name": "જમીન બાનાખત Generator",
-  "short_name": "બાનાખત",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#111111",
-  "icons": []
-}
+{"name":"જમીન બાનાખત Generator","short_name":"બાનાખત","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#ffffff"}

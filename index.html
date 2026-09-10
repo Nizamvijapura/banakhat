@@ -1,7 +1,14 @@
 <!doctype html><html lang="gu"><head><meta charset="utf-8"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#111111"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="બાનાખત"><meta name="viewport" content="width=device-width,initial-scale=1"><title>જમીન બાનાખત</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#eef1f5;font-family:"Noto Sans Gujarati","Nirmala UI",Arial,sans-serif;color:#111}.wrap{max-width:1050px;margin:auto;padding:12px}.card{background:#fff;border-radius:12px;padding:16px;margin:10px 0;box-shadow:0 2px 10px #0001}h1{text-align:center;font-size:26px}h2{font-size:19px;border-bottom:1px solid #ddd;padding-bottom:7px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.three{grid-template-columns:repeat(3,1fr)}label{font-weight:600}input,textarea{width:100%;padding:9px;margin-top:4px;border:1px solid #aaa;border-radius:7px;font-size:16px}textarea{min-height:65px}.result{padding:10px;background:#f2f5f8;border-radius:7px;font-weight:bold}.btn{padding:10px 15px;border:0;border-radius:8px;font-weight:bold;font-size:16px;margin:4px;cursor:pointer}.primary{background:#111;color:#fff}.signature{width:100%;height:135px;border:2px dashed #888;border-radius:7px;touch-action:none}.preview{background:#fff;max-width:794px;margin:auto;padding:28px;line-height:1.55;border:1px solid #ccc}.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.sigimg{height:65px;max-width:100%}@media(max-width:700px){.grid,.three,.pgrid{grid-template-columns:1fr}}@media print{body{background:#fff}.no-print{display:none!important}.preview{border:0;max-width:none;padding:0}@page{size:A4;margin:12mm}}
-</style></head><body>
+</style><style>
+.thumb-cam-grid{display:flex;gap:12px;flex-wrap:wrap}
+.thumb-cam-box{border:1px solid #bbb;border-radius:8px;padding:10px;background:#fafafa;min-width:180px}
+.thumb-cam-box input{margin-top:8px;max-width:100%}
+.thumb-cam-box img{display:block;width:90px;height:75px;object-fit:contain;border:1px solid #999;background:#fff;margin:8px auto}
+@media print{#thumbCameraSection{display:none!important}}
+</style>
+</head><body>
 <div class="wrap no-print">
 <div class="card"><h1>જમીન બાનાખત જનરેટર</h1><div class="grid"><label>તારીખ<input type="date" id="date"></label><label>સમયમર્યાદા (મહિના)<input type="number" id="months" value="6"></label></div></div>
 <div class="card"><h2>જમીનની વિગતો</h2><div class="grid three"><label>કુલ ગુંઠા<input type="number" id="guntha" value="0" step=".01"></label><label>એકર (40 ગુંઠા = 1)<input id="acre" readonly></label><label>દર ગુંઠો ₹<input type="number" id="rate" value="2500"></label></div><div class="result">કુલ કિંમત: <span id="total">₹0</span></div><div class="grid"><label>ગામ<input id="village"></label><label>તાલુકો<input id="taluka"></label><label>જિલ્લો<input id="district"></label><label>સર્વે/બ્લોક નં.<input id="survey"></label><label>ખાતા નં.<input id="khata"></label><label>ચાર હદ<textarea id="bounds"></textarea></label></div></div>
@@ -49,7 +56,7 @@ $("preview").innerHTML=`<h2 style="text-align:center">બાનાખત (જમ
 <p>વેચનાર ખાતરી આપે છે કે જમીન અંગેનો કાયદેસર હક ધરાવે છે અને કોઈ છુપાયેલો બોજો/ગીરો/દાવો હોય તો તેની જવાબદારી વેચનારની રહેશે. સંપૂર્ણ ચુકવણી તથા કાયદેસર પ્રક્રિયા પૂર્ણ થયા બાદ જરૂરી વેચાણ દસ્તાવેજ ખરીદનારના નામે કરી આપવાનો રહેશે. બંને પક્ષોએ શરતો વાંચી/સમજી સ્વેચ્છાથી સ્વીકારી છે.</p>
 <div class="pgrid"><div><b>ખરીદનારની સહી</b><br>${sig("sb")?`<img class="sigimg" src="${sig("sb")}">`:"________________"}</div><div><b>વેચનારની સહી</b><br>${sig("ss")?`<img class="sigimg" src="${sig("ss")}">`:"________________"}</div><div><b>સાક્ષી 1:</b> ${esc($("w1").value)}<br>મો. ${esc($("w1m").value)}<br>${photoData("w1p")?`<img class="sigimg" style="height:65px;width:75px;object-fit:cover" src="${photoData("w1p")}">`:""}<br>${sig("sw1")?`<img class="sigimg" src="${sig("sw1")}">`:"સહી: __________"}</div><div><b>સાક્ષી 2:</b> ${esc($("w2").value)}<br>મો. ${esc($("w2m").value)}<br>${photoData("w2p")?`<img class="sigimg" style="height:65px;width:75px;object-fit:cover" src="${photoData("w2p")}">`:""}<br>${sig("sw2")?`<img class="sigimg" src="${sig("sw2")}">`:"સહી: __________"}</div></div>`;
 $("out").style.display="block";window.scrollTo(0,$("out").offsetTop)}
-function pdf(){
+function pdf(){addCameraThumbsToPreview();addThumbsToPreview();
   make();
   setTimeout(()=>{
     const imgs=[...document.querySelectorAll("#preview img")];
@@ -59,4 +66,47 @@ function pdf(){
 }
 function setup(id){let c=$(id),x=c.getContext("2d"),down=false;c.blank=true;function resize(){let r=c.getBoundingClientRect(),q=devicePixelRatio||1;c.width=r.width*q;c.height=r.height*q;x.setTransform(q,0,0,q,0,0);x.lineWidth=2.2;x.lineCap="round"}resize();addEventListener("resize",resize);function pos(e){let r=c.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}c.onpointerdown=e=>{down=true;c.blank=false;let p=pos(e);x.beginPath();x.moveTo(...p)};c.onpointermove=e=>{if(!down)return;let p=pos(e);x.lineTo(...p);x.stroke()};c.onpointerup=()=>down=false;c.onpointerleave=()=>down=false}
 ["sb","ss","sw1","sw2"].forEach(setup);function clr(id){let c=$(id);c.getContext("2d").clearRect(0,0,c.width,c.height);c.blank=true}
-</script></body></html>
+</script>
+
+
+<div id="thumbCameraSection" class="card">
+  <h3>📷 અંગૂઠાની છાપ — Camera થી Capture કરો</h3>
+  <p class="muted">“Thumb Capture” દબાવીને અંગૂઠાની છાપનો ફોટો લો. iPhoneમાં Camera ખુલી શકે છે અને લીધેલો ફોટો Banakhatમાં મૂકાઈ જશે.</p>
+  <div class="thumb-cam-grid">
+    <div class="thumb-cam-box"><b>ખરીદનાર</b><input id="camThumbBuyer" type="file" accept="image/*" capture="environment" onchange="captureThumb(this,'camThumbBuyerPreview','thumbBuyerPhoto')"><div id="camThumbBuyerPreview"></div></div>
+    <div class="thumb-cam-box"><b>વેચનાર</b><input id="camThumbSeller" type="file" accept="image/*" capture="environment" onchange="captureThumb(this,'camThumbSellerPreview','thumbSellerPhoto')"><div id="camThumbSellerPreview"></div></div>
+  </div>
+</div>
+
+<script>
+window.thumbPhotoData={};
+function captureThumb(input, previewId, key){
+  const file=input.files && input.files[0];
+  const box=document.getElementById(previewId);
+  if(!file){window.thumbPhotoData[key]=""; if(box)box.innerHTML=""; return;}
+  const reader=new FileReader();
+  reader.onload=function(e){
+    window.thumbPhotoData[key]=e.target.result;
+    if(box) box.innerHTML="<img src='"+e.target.result+"' alt='Thumb impression'>";
+  };
+  reader.readAsDataURL(file);
+}
+function cameraThumbPrint(key,label){
+  const d=window.thumbPhotoData[key]||"";
+  return d ? "<div style='display:inline-block;text-align:center;margin:4px 12px'><div>"+label+"</div><img src='"+d+"' style='width:70px;height:60px;object-fit:contain;border:1px solid #999'></div>" : "";
+}
+function addCameraThumbsToPreview(){
+  const p=document.getElementById("preview"); if(!p)return;
+  const old=document.getElementById("camera-thumb-print-block"); if(old)old.remove();
+  const b=document.createElement("div");
+  b.id="camera-thumb-print-block";
+  b.style.cssText="text-align:center;margin-top:10px;page-break-inside:avoid";
+  b.innerHTML="<b>અંગૂઠાની છાપ — Camera Capture</b><div>"+
+    cameraThumbPrint("thumbBuyerPhoto","ખરીદનાર")+
+    cameraThumbPrint("thumbSellerPhoto","વેચનાર")+
+    cameraThumbPrint("thumbW1Photo","સાક્ષી 1")+
+    cameraThumbPrint("thumbW2Photo","સાક્ષી 2")+"</div>";
+  p.appendChild(b);
+}
+</script>
+</body></html>
