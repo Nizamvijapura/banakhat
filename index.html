@@ -81,6 +81,33 @@ button{font-size:17px!important}
 }
 </style>
 
+
+<style>
+.photo-wrap{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.photo-preview{width:105px;height:120px;border:1px dashed #7e8998;border-radius:7px;object-fit:cover;background:#f8fafc;display:none}
+.upload-btn{display:inline-block;background:#fff;border:1px solid #aeb8c6;border-radius:8px;padding:9px 12px;font-weight:800;cursor:pointer}
+.upload-btn input{display:none}
+.key-price{font-size:21px!important;font-weight:900!important;background:#f0fff4!important;border:2px solid #54b77a!important}
+.preview-pages{display:flex;flex-direction:column;gap:18px}
+.a4page{width:210mm;height:297mm;margin:auto;background:#fff;padding:12mm;border:1px solid #aaa;box-shadow:0 2px 12px #0002;overflow:hidden;position:relative}
+.page-break{break-after:page;page-break-after:always}
+.a4page .pvhead{margin-bottom:9px}
+.a4page .photo-preview-print{width:82px;height:92px;object-fit:cover;border:1px solid #777;float:right;margin-left:7px}
+.pvperson{min-height:125px}
+.pvperson .photo-side{float:right;width:86px;text-align:center}
+.pvperson .photo-side img{width:78px;height:88px;object-fit:cover;border:1px solid #777}
+.pvperson:after{content:"";display:block;clear:both}
+.pvclause{border:1px solid #555;padding:9px;margin-top:8px;font-size:17px;line-height:1.65}
+.pdf-note{font-size:13px;text-align:center;color:#556;margin-top:5px}
+@media(max-width:900px){
+ .a4page{width:100%;height:auto;min-height:0;overflow:visible;padding:15px}
+}
+@media print{
+ .preview-pages{gap:0}
+ .a4page{width:210mm;height:297mm;margin:0;padding:12mm;border:0;box-shadow:none;overflow:hidden}
+}
+</style>
+
 </head>
 <body>
 <div class="wrap">
@@ -102,6 +129,11 @@ button{font-size:17px!important}
 <label>પિતાનું નામ</label><input id="bf">
 <label>સરનામું</label><textarea id="ba"></textarea>
 <label>મોબાઇલ નંબર</label><input id="bm" inputmode="tel">
+<div class="photo-wrap">
+  <img id="buyerPhotoPreview" class="photo-preview" alt="ખરીદનારનો ફોટો">
+  <label class="upload-btn">📷 ખરીદનારનો ફોટો<input id="buyerPhoto" type="file" accept="image/*" capture="environment"></label>
+  <button class="light" type="button" onclick="clearPhoto('buyer')">ફોટો કાઢો</button>
+</div>
 </div></section>
 
 <section class="card seller"><h2>👤 વેચનારની વિગતો</h2><div class="pad">
@@ -109,10 +141,15 @@ button{font-size:17px!important}
 <label>પિતાનું નામ</label><input id="sf">
 <label>સરનામું</label><textarea id="sa"></textarea>
 <label>મોબાઇલ નંબર</label><input id="sm" inputmode="tel">
+<div class="photo-wrap">
+  <img id="sellerPhotoPreview" class="photo-preview" alt="વેચનારનો ફોટો">
+  <label class="upload-btn">📷 વેચનારનો ફોટો<input id="sellerPhoto" type="file" accept="image/*" capture="environment"></label>
+  <button class="light" type="button" onclick="clearPhoto('seller')">ફોટો કાઢો</button>
+</div>
 </div></section>
 
 <section class="card main"><h2>📄 બાનાખતની મુખ્ય માહિતી</h2><div class="pad">
-<label>કુલ કિંમત ₹</label><input id="total" type="number" min="0" value="0">
+<label>કુલ કિંમત ₹</label><input class="key-price" id="total" type="number" min="0" value="0">
 <div class="row2"><div><label>બાનાપેટે / એડવાન્સ ₹</label><input id="adv" type="number" min="0" value="0"></div><div><label>બાકી રકમ ₹</label><input id="bal" readonly></div></div>
 <label>બાનાખત તારીખ *</label><input id="date" type="date">
 <label>છેલ્લી તારીખ</label><input id="due" type="date">
@@ -126,11 +163,11 @@ button{font-size:17px!important}
 </div></section>
 
 <section class="card sign"><h2>✍️ હસ્તાક્ષર (Signature)</h2><div class="pad siggrid">
-<div class="sigbox"><b>ખરીદનારની સહી</b><canvas class="signature" id="sb"></canvas><button class="light" onclick="clearSig('sb')">સાફ કરો</button></div>
-<div class="sigbox"><b>વેચનારની સહી</b><canvas class="signature" id="ss"></canvas><button class="light" onclick="clearSig('ss')">સાફ કરો</button></div>
-<div class="sigbox"><b>સાક્ષી 1 ની સહી</b><canvas class="signature" id="sw1"></canvas><button class="light" onclick="clearSig('sw1')">સાફ કરો</button></div>
-<div class="sigbox"><b>સાક્ષી 2 ની સહી</b><canvas class="signature" id="sw2"></canvas><button class="light" onclick="clearSig('sw2')">સાફ કરો</button></div>
-</div></section>
+<div class="sigbox"><b>ખરીદનારની સહી</b><canvas class="signature" id="sb"></canvas><button class="light" onclick="clearSig('sb')">સાફ કરો</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sb',this)"></label></div>
+<div class="sigbox"><b>વેચનારની સહી</b><canvas class="signature" id="ss"></canvas><button class="light" onclick="clearSig('ss')">સાફ કરો</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('ss',this)"></label></div>
+<div class="sigbox"><b>સાક્ષી 1 ની સહી</b><canvas class="signature" id="sw1"></canvas><button class="light" onclick="clearSig('sw1')">સાફ કરો</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sw1',this)"></label></div>
+<div class="sigbox"><b>સાક્ષી 2 ની સહી</b><canvas class="signature" id="sw2"></canvas><button class="light" onclick="clearSig('sw2')">સાફ કરો</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sw2',this)"></label></div>
+</div><div class="note">સહી મોબાઇલની સ્ક્રીન પર આંગળીથી કરી શકો છો અથવા પહેલેથી કરેલી સહીનો ફોટો/PNG અપલોડ કરી શકો છો.</div></section>
 </div>
 
 <div class="actions">
@@ -141,7 +178,7 @@ button{font-size:17px!important}
 </div>
 
 <div class="preview-title">બાનાખત Preview</div>
-<div id="preview"></div>
+<div id="preview" class="preview-pages"></div>
 </div>
 
 <script>
@@ -158,7 +195,7 @@ function acreCalc(){
  let a=+V("acre")||0; $("guntha").value=(a*40).toFixed(2).replace(/0+$/,"").replace(/\.$/,""); landCalc();
 }
 function balanceCalc(){let t=+V("total")||0,a=+V("adv")||0;$("bal").value=Math.max(0,t-a);$("totalText").textContent="₹"+M(t)}
-$("guntha").oninput=landCalc;$("rate").oninput=landCalc;$("acre").oninput=acreCalc;$("total").oninput=balanceCalc;$("adv").oninput=balanceCalc;
+$("guntha").oninput=landCalc;$("rate").oninput=landCalc;$("acre").oninput=acreCalc;$("total").oninput=balanceCalc;$("adv").oninput=balanceCalc;$("date").onchange=makeInstallments;
 function addMonths(s,n){let d=new Date(s+"T00:00:00");d.setMonth(d.getMonth()+n);return d.toISOString().slice(0,10)}
 function makeInstallments(){
  let n=Math.min(30,Math.max(1,+V("count")||1)),b=+$("bal").value||0,q=Math.floor(b/n*100)/100,base=V("date"),h="";
@@ -166,51 +203,128 @@ function makeInstallments(){
  $("instBody").innerHTML=h;
 }
 function renumber(){[...$("instBody").rows].forEach((r,i)=>r.cells[0].textContent=i+1);$("count").value=$("instBody").rows.length}
+const photoData={buyer:"",seller:""};
+const sigData={sb:"",ss:"",sw1:"",sw2:""};
+
 function setupSig(id){
- let c=$(id),ctx=c.getContext("2d"),down=false;c.width=700;c.height=280;c.dataset.blank="1";ctx.lineWidth=4;ctx.lineCap="round";ctx.lineJoin="round";
+ let c=$(id),ctx=c.getContext("2d"),down=false;
+ c.width=700;c.height=280;c.dataset.blank="1";
+ ctx.lineWidth=4;ctx.lineCap="round";ctx.lineJoin="round";
  const pos=e=>{let r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*c.width/r.width,y:(e.clientY-r.top)*c.height/r.height}};
  c.addEventListener("pointerdown",e=>{e.preventDefault();down=true;c.setPointerCapture(e.pointerId);c.dataset.blank="0";let p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)});
  c.addEventListener("pointermove",e=>{if(!down)return;e.preventDefault();let p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke()});
  c.addEventListener("pointerup",()=>down=false);c.addEventListener("pointercancel",()=>down=false);
 }
-function clearSig(id){let c=$(id);c.getContext("2d").clearRect(0,0,c.width,c.height);c.dataset.blank="1"}
-function sig(id){let c=$(id);return c.dataset.blank==="1"?"":c.toDataURL("image/png")}
+function clearSig(id){
+ let c=$(id);c.getContext("2d").clearRect(0,0,c.width,c.height);c.dataset.blank="1";sigData[id]="";
+}
+function uploadSig(id,input){
+ const f=input.files&&input.files[0]; if(!f)return;
+ const r=new FileReader();
+ r.onload=e=>{
+   const img=new Image();
+   img.onload=()=>{
+     const c=$(id),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);
+     const scale=Math.min(c.width/img.width,c.height/img.height);
+     const w=img.width*scale,h=img.height*scale;
+     ctx.drawImage(img,(c.width-w)/2,(c.height-h)/2,w,h);
+     c.dataset.blank="0";sigData[id]=c.toDataURL("image/png");
+   }; img.src=e.target.result;
+ }; r.readAsDataURL(f);
+}
+function sig(id){
+ if(sigData[id]) return sigData[id];
+ let c=$(id); return c.dataset.blank==="1"?"":c.toDataURL("image/png");
+}
+function setupPhoto(kind){
+ const input=$(kind+"Photo"),img=$(kind+"PhotoPreview");
+ input.addEventListener("change",e=>{
+   const f=e.target.files&&e.target.files[0]; if(!f)return;
+   const r=new FileReader();r.onload=ev=>{photoData[kind]=ev.target.result;img.src=ev.target.result;img.style.display="block"};r.readAsDataURL(f);
+ });
+}
+function clearPhoto(kind){
+ photoData[kind]="";$(kind+"Photo").value="";let img=$(kind+"PhotoPreview");img.src="";img.style.display="none";
+}
+function photo(kind){return photoData[kind]||""}
+
 function makePreview(){
  let g=+V("guntha")||0,a=g/40,t=+V("total")||0,ad=+V("adv")||0,b=Math.max(0,t-ad);
  let rows=[...$("instBody").rows].map((r,i)=>`<tr><td>${i+1}</td><td>₹ ${M(r.querySelector(".ia").value)}</td><td>${E(r.querySelector(".id").value||"-")}</td></tr>`).join("");
- let S=id=>{let d=sig(id);return d?`<img src="${d}">`:"________________"};
- $("preview").innerHTML=`<div class="pvhead"><h1><b>જમીન બાનાખત</b></h1><p>આજ રોજ જમીન ખરીદ-વેચાણ માટે બાનાખત કરવામાં આવે છે.</p></div>
- <div class="pvgrid">
- <div class="pvbox"><b style="font-size:20px">ખરીદનાર:</b> ${E(V("buyer"))}<br>પિતાનું નામ: ${E(V("bf"))}<br>સરનામું: ${E(V("ba"))}<br>મો.: ${E(V("bm"))}</div>
- <div class="pvbox"><b style="font-size:20px">વેચનાર:</b> ${E(V("seller"))}<br>પિતાનું નામ: ${E(V("sf"))}<br>સરનામું: ${E(V("sa"))}<br>મો.: ${E(V("sm"))}</div>
- <div class="pvbox"><b>જમીન:</b> ગામ ${E(V("village"))}, તાલુકો ${E(V("taluka"))}, જિલ્લો ${E(V("district"))}<br>સર્વે/બ્લોક: ${E(V("survey"))}<br>વિસ્તાર: ${M(g)} ગુંઠા = ${(g/40).toFixed(4)} એકર<br>${E(V("landdetail"))}</div>
- <div class="pvbox"><b>બાનાખત:</b> તારીખ ${E(V("date"))}<br>કુલ કિંમત: ₹ ${M(t)}<br>બાનાપેટે: ₹ ${M(ad)}<br>બાકી: ₹ ${M(b)}<br>છેલ્લી તારીખ: ${E(V("due"))}</div>
+ let S=id=>{let d=sig(id);return d?`<img src="${d}" style="height:58px;max-width:100%;object-fit:contain">`:"________________"};
+ let P=kind=>{let d=photo(kind);return d?`<img src="${d}" class="photo-side">`:""};
+ $("preview").innerHTML=`
+ <div class="a4page">
+   <div class="pvhead"><h1><b>જમીન બાનાખત</b></h1><p>આજ રોજ જમીન ખરીદ-વેચાણ માટે બાનાખત કરવામાં આવે છે.</p><p><b>બાનાખત તારીખ: ${E(V("date"))}</b></p></div>
+   <div class="pvgrid">
+    <div class="pvbox pvperson"><div class="photo-side">${P("buyer")}</div><b style="font-size:20px">ખરીદનાર (લેનાર)</b><br>નામ: ${E(V("buyer"))}<br>પિતાનું નામ: ${E(V("bf"))}<br>સરનામું: ${E(V("ba"))}<br>મો.: ${E(V("bm"))}</div>
+    <div class="pvbox pvperson"><div class="photo-side">${P("seller")}</div><b style="font-size:20px">વેચનાર</b><br>નામ: ${E(V("seller"))}<br>પિતાનું નામ: ${E(V("sf"))}<br>સરનામું: ${E(V("sa"))}<br>મો.: ${E(V("sm"))}</div>
+    <div class="pvbox"><b>જમીનની વિગતો</b><br>ગામ: ${E(V("village"))}<br>તાલુકો: ${E(V("taluka"))}<br>જિલ્લો: ${E(V("district"))}<br>સર્વે/બ્લોક: ${E(V("survey"))}<br>વિસ્તાર: ${M(g)} ગુંઠા = ${(g/40).toFixed(4)} એકર<br>${E(V("landdetail"))}</div>
+    <div class="pvbox"><b>બાનાખતની કિંમત</b><br>કુલ કિંમત: <b style="font-size:20px">₹ ${M(t)}</b><br>બાનાપેટે: <b>₹ ${M(ad)}</b><br>બાકી: <b>₹ ${M(b)}</b><br>છેલ્લી તારીખ: ${E(V("due"))}</div>
+   </div>
+   <div class="pvclause">
+    <p style="margin-top:0"><b>બાનાખતનો વિગતવાર કરાર:</b></p>
+    <p>આજ રોજ ઉપરોક્ત તારીખે હું વેચનાર, ઉપરોક્ત જમીન મારી માલિકીની અને કાયદેસર હકવાળી હોવાનું જણાવી, આ જમીન ખરીદનારને કુલ <b>₹ ${M(t)}</b> (રૂપિયા ${M(t)} પુરા) માં વેચવા માટે સ્વેચ્છાએ સંમત થયો/થઈ છું. ખરીદનારએ પણ ઉપરોક્ત જમીન, તેની હદ, વિસ્તાર, દસ્તાવેજી વિગતો તથા વેચનાર દ્વારા જણાવવામાં આવેલી માહિતી સમજીને આ જમીન ખરીદવાની સંમતિ આપી છે.</p>
+    <p>આજરોજ ખરીદનાર તરફથી વેચનારને બાનાપેટે/એડવાન્સ તરીકે <b>₹ ${M(ad)}</b> ચૂકવવામાં આવેલ છે, જે રકમ વેચનારએ સ્વીકારી હોવાનું માનવામાં આવે છે. કુલ વેચાણ કિંમતમાંથી બાકી રહેતી <b>₹ ${M(b)}</b> રકમ નીચે દર્શાવેલ હપ્તાઓ મુજબ ચૂકવવાની રહેશે.</p>
+    <p>ખરીદનારએ આ જમીન કોઈપણ દબાણ, ધમકી, લાલચ કે ગેરસમજ વિના, પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં, સ્વેચ્છાએ ખરીદવાની સંમતિ આપી છે. વેચનારએ પણ કોઈપણ દબાણ કે બળજબરી વિના પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં આ બાનાખત કરી છે.</p>
+    <p>વેચનાર ખાતરી આપે છે કે ઉપરોક્ત જમીન અંગેનો માલિકી હક તથા વેચાણ કરવાનો અધિકાર પોતે ધરાવે છે. જમીન ઉપર કોઈ ગીરો, બોજો, કોર્ટ કેસ, દાવો, કબજાનો વિવાદ, સરકારી બાકી, અગાઉનું વેચાણ/બાનાખત અથવા અન્ય કોઈ હક-દાવો હોય અને તે બાબત ખરીદનારથી છુપાવવામાં આવી હોય તો તેની જવાબદારી વેચનારની રહેશે.</p>
+    <p>વેચનાર જમીનના મૂળ હક-દસ્તાવેજો તથા જરૂરી કાયદેસર દસ્તાવેજી પ્રક્રિયામાં ખરીદનારને સહકાર આપશે. સંપૂર્ણ વેચાણ કિંમત પ્રાપ્ત થયા બાદ, લાગુ પડતા કાયદા અને જરૂરી પ્રક્રિયા મુજબ વેચાણ દસ્તાવેજ/રજિસ્ટર્ડ દસ્તાવેજ કરાવવા માટે વેચનાર હાજર રહી જરૂરી સહી તથા કાર્યવાહી કરશે.</p>
+   </div>
  </div>
- <div class="banakhat-clause" style="border:1px solid #555;padding:10px;margin-top:8px;line-height:1.85;font-size:18px">
- <p style="margin-top:0"><b>બાનાખતનો વિગતવાર કરાર:</b></p>
- <p>આજ રોજ ઉપરોક્ત તારીખે હું વેચનાર, ઉપરોક્ત જમીન મારી માલિકીની અને કાયદેસર હકવાળી હોવાનું જણાવી, આ જમીન ખરીદનારને કુલ <b>₹ ${M(t)}</b> (રૂપિયા ${M(t)} પુરા) માં વેચવા માટે સ્વેચ્છાએ સંમત થયો/થઈ છું. ખરીદનારએ પણ ઉપરોક્ત જમીન, તેની હદ, વિસ્તાર, દસ્તાવેજી વિગતો તથા વેચનાર દ્વારા જણાવવામાં આવેલી માહિતી સમજીને આ જમીન ખરીદવાની સંમતિ આપી છે.</p>
- <p>આજરોજ ખરીદનાર તરફથી વેચનારને બાનાપેટે/એડવાન્સ તરીકે <b>₹ ${M(ad)}</b> ચૂકવવામાં આવેલ છે, જે રકમ વેચનારએ સ્વીકારી હોવાનું માનવામાં આવે છે. કુલ વેચાણ કિંમતમાંથી બાકી રહેતી <b>₹ ${M(b)}</b> રકમ નીચે દર્શાવેલ હપ્તાઓ મુજબ ચૂકવવાની રહેશે.</p>
- <p>ખરીદનારએ આ જમીન કોઈપણ દબાણ, ધમકી, લાલચ કે ગેરસમજ વિના, પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં, સ્વેચ્છાએ ખરીદવાની સંમતિ આપી છે. વેચનારએ પણ કોઈપણ દબાણ કે બળજબરી વિના પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં આ બાનાખત કરી છે.</p>
- <p>વેચનાર ખાતરી આપે છે કે ઉપરોક્ત જમીન અંગેનો માલિકી હક તથા વેચાણ કરવાનો અધિકાર પોતે ધરાવે છે. જમીન ઉપર કોઈ ગીરો, બોજો, કોર્ટ કેસ, દાવો, કબજાનો વિવાદ, સરકારી બાકી, અગાઉનું વેચાણ/બાનાખત અથવા અન્ય કોઈ હક-દાવો હોય અને તે બાબત ખરીદનારથી છુપાવવામાં આવી હોય તો તેની જવાબદારી વેચનારની રહેશે.</p>
- <p>વેચનાર જમીનના મૂળ હક-દસ્તાવેજો તથા જરૂરી કાયદેસર દસ્તાવેજી પ્રક્રિયામાં ખરીદનારને સહકાર આપશે. સંપૂર્ણ વેચાણ કિંમત પ્રાપ્ત થયા બાદ, લાગુ પડતા કાયદા અને જરૂરી પ્રક્રિયા મુજબ વેચાણ દસ્તાવેજ/રજિસ્ટર્ડ દસ્તાવેજ કરાવવા માટે વેચનાર હાજર રહી જરૂરી સહી તથા કાર્યવાહી કરશે.</p>
- <p>હપ્તાની રકમ અને તારીખો નીચેની યાદીમાં દર્શાવેલ છે. બંને પક્ષોની પરસ્પર સંમતિથી, જો જરૂરી હોય તો, હપ્તાની તારીખ અથવા રકમમાં લેખિત રીતે ફેરફાર કરી શકાશે.</p>
- <p>જમીનનો કબજો, વેચાણ દસ્તાવેજ અને બાકી રહેલી કાયદેસર પ્રક્રિયા અંગેની શરતો બંને પક્ષોની સંમતિ તથા લાગુ કાયદા મુજબ રહેશે.</p>
- <p style="margin-bottom:0">બંને પક્ષોએ આ બાનાખતની તમામ શરતો વાંચી/વાંચાવી, સમજી, પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં, કોઈપણ દબાણ કે બળજબરી વિના, સ્વેચ્છાએ સ્વીકારી છે અને નીચે સાક્ષીઓની હાજરીમાં સહી કરી છે.</p>
- </div>
- <table class="pvtable"><thead><tr><th>હપ્તા નં.</th><th>રકમ</th><th>ચૂકવણી તારીખ</th></tr></thead><tbody>${rows}</tbody></table>
- ${V("terms")?`<div style="border:1px solid #555;padding:8px;margin-top:8px"><b>ખાસ શરતો / અન્ય સંમતિ:</b><br>${E(V("terms"))}</div>`:""}
- <div class="pvsig"><div><b>ખરીદનારની સહી</b><br>${S("sb")}</div><div><b>વેચનારની સહી</b><br>${S("ss")}</div><div><b>સાક્ષી 1 ની સહી</b><br>${S("sw1")}</div><div><b>સાક્ષી 2 ની સહી</b><br>${S("sw2")}</div></div>`;
+ <div class="a4page page-break">
+   <div class="pvhead"><h1><b>જમીન બાનાખત — હપ્તા અને શરતો</b></h1><p>બાનાખત તારીખ: <b>${E(V("date"))}</b></p></div>
+   <h2 style="font-size:21px;margin:5px 0"><b>હપ્તાની વિગતો</b></h2>
+   <table class="pvtable"><thead><tr><th>હપ્તા નં.</th><th>રકમ (₹)</th><th>ચૂકવણી તારીખ</th></tr></thead><tbody>${rows}</tbody></table>
+   <div class="pvclause">
+    <p><b>બાનાખતની અન્ય શરતો:</b></p>
+    <p>હપ્તાની રકમ અને તારીખો ઉપરની યાદીમાં દર્શાવેલ છે. બંને પક્ષોની પરસ્પર સંમતિથી, જો જરૂરી હોય તો, હપ્તાની તારીખ અથવા રકમમાં લેખિત રીતે ફેરફાર કરી શકાશે.</p>
+    <p>જમીનનો કબજો, વેચાણ દસ્તાવેજ અને બાકી રહેલી કાયદેસર પ્રક્રિયા અંગેની શરતો બંને પક્ષોની સંમતિ તથા લાગુ કાયદા મુજબ રહેશે.</p>
+    <p>બંને પક્ષોએ આ બાનાખતની તમામ શરતો વાંચી/વાંચાવી, સમજી, પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં, કોઈપણ દબાણ કે બળજબરી વિના, સ્વેચ્છાએ સ્વીકારી છે અને નીચે સાક્ષીઓની હાજરીમાં સહી કરી છે.</p>
+    ${V("terms")?`<p><b>ખાસ શરતો / અન્ય સંમતિ:</b><br>${E(V("terms"))}</p>`:""}
+   </div>
+   <div class="pvsig" style="margin-top:16px">
+    <div><b>ખરીદનારની સહી</b><br>${S("sb")}</div>
+    <div><b>વેચનારની સહી</b><br>${S("ss")}</div>
+    <div><b>સાક્ષી 1 ની સહી</b><br>${S("sw1")}</div>
+    <div><b>સાક્ષી 2 ની સહી</b><br>${S("sw2")}</div>
+   </div>
+   <p class="pdf-note">આ બાનાખતનું લખાણ પક્ષકારોની આપેલી માહિતીના આધારે તૈયાર કરવામાં આવ્યું છે.</p>
+ </div>`;
 }
-function savePDF(){makePreview();setTimeout(()=>window.print(),250)}
+
+function savePDF(){
+ makePreview();
+ setTimeout(async()=>{
+   if(!window.html2pdf){alert("PDF library લોડ થઈ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");return}
+   const opt={
+     margin:0,
+     filename:"banakhat-"+new Date().toISOString().slice(0,10)+".pdf",
+     image:{type:"jpeg",quality:.98},
+     html2canvas:{scale:2,useCORS:true,backgroundColor:"#fff"},
+     jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},
+     pagebreak:{mode:["css","legacy"]}
+   };
+   await html2pdf().set(opt).from($("preview")).save();
+ },250);
+}
+
 async function saveJPG(){
- makePreview();await new Promise(r=>setTimeout(r,150));
+ makePreview();await new Promise(r=>setTimeout(r,120));
  if(!window.html2canvas){alert("JPG બનાવવા માટે internet ચાલુ રાખો અને ફરી પ્રયાસ કરો.");return}
- let c=await html2canvas($("preview"),{scale:2,backgroundColor:"#fff",useCORS:true});
- let a=document.createElement("a");a.download="banakhat-"+new Date().toISOString().slice(0,10)+".jpg";a.href=c.toDataURL("image/jpeg",.95);a.click();
+ const pages=[...document.querySelectorAll("#preview .a4page")];
+ for(let i=0;i<pages.length;i++){
+   const c=await html2canvas(pages[i],{scale:2,backgroundColor:"#fff",useCORS:true});
+   const a=document.createElement("a");a.download=`banakhat-page-${i+1}.jpg`;a.href=c.toDataURL("image/jpeg",.96);a.click();
+   await new Promise(r=>setTimeout(r,150));
+ }
 }
+
 $("date").value=new Date().toISOString().slice(0,10);
-["sb","ss","sw1","sw2"].forEach(setupSig);balanceCalc();makeInstallments();makePreview();
+["sb","ss","sw1","sw2"].forEach(setupSig);
+setupPhoto("buyer");setupPhoto("seller");
+balanceCalc();makeInstallments();makePreview();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 </html>
