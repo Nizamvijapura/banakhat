@@ -108,6 +108,43 @@ button{font-size:17px!important}
 }
 </style>
 
+
+<style>
+/* FINAL EXPORT: exactly 2 A4 pages */
+#preview.preview-pages{display:flex;flex-direction:column;gap:12px}
+#preview .a4page{
+  width:210mm!important;height:297mm!important;min-height:297mm!important;
+  max-height:297mm!important;box-sizing:border-box!important;
+  margin:0 auto!important;padding:8mm!important;
+  overflow:hidden!important;background:#fff!important;
+  position:relative!important;
+}
+#preview .a4page *{box-sizing:border-box}
+#preview .a4page{font-size:11px!important;line-height:1.32!important}
+#preview .a4page .pvhead{padding-bottom:4px!important;margin-bottom:5px!important}
+#preview .a4page .pvhead h1{font-size:20px!important;line-height:1.15!important}
+#preview .a4page .pvhead p{font-size:10px!important;margin:2px 0!important}
+#preview .a4page .pvgrid{gap:5px!important}
+#preview .a4page .pvbox{font-size:10px!important;padding:5px!important;line-height:1.3!important}
+#preview .a4page .pvbox b{font-size:11px!important}
+#preview .a4page .pvperson{min-height:0!important}
+#preview .a4page .pvperson .photo-side img{width:58px!important;height:66px!important}
+#preview .a4page .pvclause{font-size:10.4px!important;line-height:1.38!important;padding:6px!important;margin-top:5px!important}
+#preview .a4page .pvclause p{font-size:10.4px!important;line-height:1.38!important;margin:4px 0!important}
+#preview .a4page .pvtable{margin-top:5px!important}
+#preview .a4page .pvtable th,#preview .a4page .pvtable td{font-size:10px!important;padding:4px!important;line-height:1.2!important}
+#preview .a4page .pvsig{gap:5px!important;margin-top:8px!important}
+#preview .a4page .pvsig>div{font-size:10px!important;min-height:66px!important;padding:4px!important}
+#preview .a4page .pvsig b{font-size:11px!important}
+#preview .a4page .pvsig img{height:42px!important}
+#preview .a4page .pdf-note{font-size:8px!important;margin-top:4px!important}
+@media print{
+  #preview.preview-pages{gap:0!important}
+  #preview .a4page{page-break-after:always!important;break-after:page!important}
+  #preview .a4page:last-child{page-break-after:auto!important;break-after:auto!important}
+}
+</style>
+
 </head>
 <body>
 <div class="wrap">
@@ -292,31 +329,54 @@ function makePreview(){
  </div>`;
 }
 
-function savePDF(){
- makePreview();
- setTimeout(async()=>{
-   if(!window.html2pdf){alert("PDF library લોડ થઈ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");return}
-   const opt={
-     margin:0,
-     filename:"banakhat-"+new Date().toISOString().slice(0,10)+".pdf",
-     image:{type:"jpeg",quality:.98},
-     html2canvas:{scale:2,useCORS:true,backgroundColor:"#fff"},
-     jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},
-     pagebreak:{mode:["css","legacy"]}
-   };
-   await html2pdf().set(opt).from($("preview")).save();
- },250);
+async function savePDF(){
+  makePreview();
+  await new Promise(r=>setTimeout(r,150));
+  if(!window.html2canvas || !window.jspdf){
+    alert("PDF માટે જરૂરી library લોડ થઈ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");
+    return;
+  }
+  const pages=[...document.querySelectorAll("#preview .a4page")];
+  if(pages.length!==2){alert("બાનાખતના 2 A4 પેજ તૈયાર થયા નથી.");return;}
+  const {jsPDF}=window.jspdf;
+  const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait",compress:true});
+  for(let i=0;i<2;i++){
+    const canvas=await html2canvas(pages[i],{
+      scale:2,
+      backgroundColor:"#fff",
+      useCORS:true,
+      logging:false,
+      width:pages[i].scrollWidth,
+      height:pages[i].scrollHeight
+    });
+    const img=canvas.toDataURL("image/jpeg",0.96);
+    if(i>0) pdf.addPage("a4","portrait");
+    pdf.addImage(img,"JPEG",0,0,210,297,undefined,"FAST");
+  }
+  pdf.save("banakhat-"+(V("date")||new Date().toISOString().slice(0,10))+".pdf");
 }
 
 async function saveJPG(){
- makePreview();await new Promise(r=>setTimeout(r,120));
- if(!window.html2canvas){alert("JPG બનાવવા માટે internet ચાલુ રાખો અને ફરી પ્રયાસ કરો.");return}
- const pages=[...document.querySelectorAll("#preview .a4page")];
- for(let i=0;i<pages.length;i++){
-   const c=await html2canvas(pages[i],{scale:2,backgroundColor:"#fff",useCORS:true});
-   const a=document.createElement("a");a.download=`banakhat-page-${i+1}.jpg`;a.href=c.toDataURL("image/jpeg",.96);a.click();
-   await new Promise(r=>setTimeout(r,150));
- }
+  makePreview();
+  await new Promise(r=>setTimeout(r,150));
+  if(!window.html2canvas){alert("JPG બનાવવા માટે જરૂરી library લોડ થઈ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");return;}
+  const pages=[...document.querySelectorAll("#preview .a4page")];
+  if(pages.length!==2){alert("બાનાખતના 2 A4 પેજ તૈયાર થયા નથી.");return;}
+  for(let i=0;i<2;i++){
+    const canvas=await html2canvas(pages[i],{
+      scale:2,
+      backgroundColor:"#fff",
+      useCORS:true,
+      logging:false,
+      width:pages[i].scrollWidth,
+      height:pages[i].scrollHeight
+    });
+    const a=document.createElement("a");
+    a.download=`banakhat-page-${i+1}.jpg`;
+    a.href=canvas.toDataURL("image/jpeg",0.96);
+    document.body.appendChild(a);a.click();a.remove();
+    await new Promise(r=>setTimeout(r,250));
+  }
 }
 
 $("date").value=new Date().toISOString().slice(0,10);
@@ -326,5 +386,6 @@ balanceCalc();makeInstallments();makePreview();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
