@@ -171,6 +171,24 @@ button{font-size:17px!important}
 }
 </style>
 
+
+<style>
+.preview-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.68);z-index:99999;padding:12px}
+.preview-modal.open{display:flex;align-items:center;justify-content:center}
+.preview-window{width:min(96vw,1100px);height:min(94vh,900px);background:#e9eef4;border-radius:12px;box-shadow:0 12px 45px #0008;display:flex;flex-direction:column;overflow:hidden}
+.preview-bar{height:54px;flex:0 0 54px;background:#fff;border-bottom:1px solid #c9d2dd;display:flex;align-items:center;justify-content:space-between;padding:7px 10px 7px 16px;font-size:18px}
+.zoom-controls{display:flex;align-items:center;gap:7px}.zoom-controls button{min-width:40px;height:38px;padding:4px 10px}
+.zoom-controls .delete-btn{width:40px!important;min-width:40px!important;height:38px!important}
+#zoomText{min-width:52px;text-align:center;font-weight:800}
+.preview-viewport{flex:1;overflow:auto;padding:18px;text-align:center;-webkit-overflow-scrolling:touch}
+#previewLarge{display:inline-block;transform-origin:top center}
+#previewLarge .a4page{margin:0 auto 18px;box-shadow:0 2px 14px #0003}
+@media(max-width:700px){
+ .preview-modal{padding:0}.preview-window{width:100vw;height:100vh;border-radius:0}
+ .preview-bar{font-size:16px}.preview-viewport{padding:10px}
+}
+</style>
+
 </head>
 <body>
 <div class="wrap">
@@ -189,7 +207,7 @@ button{font-size:17px!important}
 
 <section class="card buyer"><h2>👤 ખરીદનારની વિગતો</h2><div class="pad">
 <label>નામ *</label><input id="buyer">
-<label>પિતાનું નામ</label><input id="bf">
+
 <label>સરનામું</label><textarea id="ba"></textarea>
 <label>મોબાઇલ નંબર</label><input id="bm" inputmode="tel">
 <div class="photo-wrap">
@@ -201,7 +219,7 @@ button{font-size:17px!important}
 
 <section class="card seller"><h2>👤 વેચનારની વિગતો</h2><div class="pad">
 <label>નામ *</label><input id="seller">
-<label>પિતાનું નામ</label><input id="sf">
+
 <label>સરનામું</label><textarea id="sa"></textarea>
 <label>મોબાઇલ નંબર</label><input id="sm" inputmode="tel">
 <div class="photo-wrap">
@@ -226,15 +244,15 @@ button{font-size:17px!important}
 </div></section>
 
 <section class="card sign"><h2>✍️ હસ્તાક્ષર (Signature)</h2><div class="pad siggrid">
-<div class="sigbox"><b>ખરીદનારની સહી</b><canvas class="signature" id="sb"></canvas><button class="light" onclick="clearSig('sb')" class="delete-btn">🗑️</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sb',this)"></label></div>
-<div class="sigbox"><b>વેચનારની સહી</b><canvas class="signature" id="ss"></canvas><button class="light" onclick="clearSig('ss')" class="delete-btn">🗑️</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('ss',this)"></label></div>
-<div class="sigbox"><b>સાક્ષી 1 ની સહી</b><canvas class="signature" id="sw1"></canvas><button class="light" onclick="clearSig('sw1')" class="delete-btn">🗑️</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sw1',this)"></label></div>
-<div class="sigbox"><b>સાક્ષી 2 ની સહી</b><canvas class="signature" id="sw2"></canvas><button class="light" onclick="clearSig('sw2')" class="delete-btn">🗑️</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sw2',this)"></label></div>
+<div class="sigbox"><b>ખરીદનારની સહી</b><canvas class="signature" id="sb"></canvas><button class="light delete-btn" onclick="clearSig('sb')">🗑️</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sb',this)"></label></div>
+<div class="sigbox"><b>વેચનારની સહી</b><canvas class="signature" id="ss"></canvas><button class="light delete-btn" onclick="clearSig('ss')">🗑️</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('ss',this)"></label></div>
+<div class="sigbox"><b>સાક્ષી 1 ની સહી</b><canvas class="signature" id="sw1"></canvas><button class="light delete-btn" onclick="clearSig('sw1')">🗑️</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sw1',this)"></label></div>
+<div class="sigbox"><b>સાક્ષી 2 ની સહી</b><canvas class="signature" id="sw2"></canvas><button class="light delete-btn" onclick="clearSig('sw2')">🗑️</button> <label class="upload-btn">📁 અપલોડ<input type="file" accept="image/*" onchange="uploadSig('sw2',this)"></label></div>
 </div><div class="note">સહી મોબાઇલની સ્ક્રીન પર આંગળીથી કરી શકો છો અથવા પહેલેથી કરેલી સહીનો ફોટો/PNG અપલોડ કરી શકો છો.</div></section>
 </div>
 
 <div class="actions">
-<button class="green" onclick="makePreview()">📄 બાનાખત તૈયાર કરો</button>
+<button class="green" onclick="openPreview()">📄 બાનાખત તૈયાર કરો</button>
 <button class="red" onclick="savePDF()">📕 PDF માં Save કરો</button>
 <button class="blue" onclick="saveJPG()">🖼️ JPG માં Save કરો</button>
 <button class="gray" onclick="window.print()">🖨️ Print કરો</button>
@@ -242,6 +260,20 @@ button{font-size:17px!important}
 
 <div class="preview-title">બાનાખત Preview</div>
 <div id="preview" class="preview-pages"></div>
+<div id="previewModal" class="preview-modal" aria-hidden="true">
+  <div class="preview-window">
+    <div class="preview-bar">
+      <b>બાનાખત Preview</b>
+      <div class="zoom-controls">
+        <button class="light" onclick="zoomPreview(-1)">−</button>
+        <span id="zoomText">100%</span>
+        <button class="light" onclick="zoomPreview(1)">+</button>
+        <button class="delete-btn" onclick="closePreview()">✕</button>
+      </div>
+    </div>
+    <div class="preview-viewport"><div id="previewLarge"></div></div>
+  </div>
+</div>
 </div>
 
 <script>
@@ -354,8 +386,9 @@ function clearPhoto(kind){
 }
 function photo(kind){return photoData[kind]||""}
 
+
 function makePreview(){
- let g=+V("guntha")||0,a=g/40,t=+V("total")||0,ad=+V("adv")||0,b=Math.max(0,t-ad);
+ let g=+V("guntha")||0,t=+V("total")||0,ad=+V("adv")||0,b=Math.max(0,t-ad);
  let rows=[...$("instBody").rows].map((r,i)=>`<tr><td>${i+1}</td><td>₹ ${M(r.querySelector(".ia").value)}<br><small>${E(guAmount(r.querySelector(".ia").value))}</small></td><td>${fmtDate(r.querySelector(".id").value||"-")}</td></tr>`).join("");
  let S=id=>{let d=sig(id);return d?`<img src="${d}" style="height:58px;max-width:100%;object-fit:contain">`:"________________"};
  let P=kind=>{let d=photo(kind);return d?`<img src="${d}" class="photo-side">`:""};
@@ -363,8 +396,8 @@ function makePreview(){
  <div class="a4page">
    <div class="pvhead"><h1><b>જમીન બાનાખત</b></h1><p>આજ રોજ જમીન ખરીદ-વેચાણ માટે બાનાખત કરવામાં આવે છે.</p><p><b>બાનાખત તારીખ: ${fmtDate(V("date"))}</b></p></div>
    <div class="pvgrid">
-    <div class="pvbox pvperson"><div class="photo-side">${P("buyer")}</div><b style="font-size:20px">ખરીદનાર (લેનાર)</b><br>નામ: ${E(V("buyer"))}<br>પિતાનું નામ: ${E(V("bf"))}<br>સરનામું: ${E(V("ba"))}<br>મો.: ${E(V("bm"))}</div>
-    <div class="pvbox pvperson"><div class="photo-side">${P("seller")}</div><b style="font-size:20px">વેચનાર</b><br>નામ: ${E(V("seller"))}<br>પિતાનું નામ: ${E(V("sf"))}<br>સરનામું: ${E(V("sa"))}<br>મો.: ${E(V("sm"))}</div>
+    <div class="pvbox pvperson"><div class="photo-side">${P("buyer")}</div><b style="font-size:20px">ખરીદનાર (લેનાર)</b><br>નામ: ${E(V("buyer"))}<br>સરનામું: ${E(V("ba"))}<br>મો.: ${E(V("bm"))}</div>
+    <div class="pvbox pvperson"><div class="photo-side">${P("seller")}</div><b style="font-size:20px">વેચનાર</b><br>નામ: ${E(V("seller"))}<br>સરનામું: ${E(V("sa"))}<br>મો.: ${E(V("sm"))}</div>
     <div class="pvbox"><b>જમીનની વિગતો</b><br>ગામ: ${E(V("village"))}<br>તાલુકો: ${E(V("taluka"))}<br>જિલ્લો: ${E(V("district"))}<br>સર્વે/બ્લોક: ${E(V("survey"))}<br>વિસ્તાર: ${M(g)} ગુંઠા = ${(g/40).toFixed(4)} એકર<br>${E(V("landdetail"))}</div>
     <div class="pvbox"><b>બાનાખતની કિંમત</b><br>કુલ કિંમત: <b style="font-size:20px">₹ ${M(t)}</b><div class="amount-words">શબ્દોમાં: ${E(guAmount(t))}</div><br>બાનાપેટે: <b>₹ ${M(ad)}</b><div class="amount-words">શબ્દોમાં: ${E(guAmount(ad))}</div><br>બાકી: <b>₹ ${M(b)}</b><div class="amount-words">શબ્દોમાં: ${E(guAmount(b))}</div><br>છેલ્લી તારીખ: ${fmtDate(V("due"))}</div>
    </div>
@@ -378,7 +411,7 @@ function makePreview(){
    </div>
  </div>
  <div class="a4page page-break">
-   <div class="pvhead"><h1><b>જમીન બાનાખત — હપ્તા અને શરતો</b></h1><p>બાનાખત તારીખ: <b>${E(V("date"))}</b></p></div>
+   <div class="pvhead"><h1><b>જમીન બાનાખત — હપ્તા અને શરતો</b></h1><p>બાનાખત તારીખ: <b>${fmtDate(V("date"))}</b></p></div>
    <h2 style="font-size:21px;margin:5px 0"><b>હપ્તાની વિગતો</b></h2>
    <table class="pvtable"><thead><tr><th>હપ્તા નં.</th><th>રકમ (₹)</th><th>ચૂકવણી તારીખ</th></tr></thead><tbody>${rows}</tbody></table>
    <div class="pvclause">
@@ -396,56 +429,51 @@ function makePreview(){
    </div>
    <p class="pdf-note">આ બાનાખતનું લખાણ પક્ષકારોની આપેલી માહિતીના આધારે તૈયાર કરવામાં આવ્યું છે.</p>
  </div>`;
+ return $("preview").innerHTML;
 }
-
-async function savePDF(){
-  makePreview();
-  await new Promise(r=>setTimeout(r,150));
-  if(!window.html2canvas || !window.jspdf){
-    alert("PDF માટે જરૂરી library લોડ થઈ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");
-    return;
-  }
-  const pages=[...document.querySelectorAll("#preview .a4page")];
-  if(pages.length!==2){alert("બાનાખતના 2 A4 પેજ તૈયાર થયા નથી.");return;}
-  const {jsPDF}=window.jspdf;
-  const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait",compress:true});
-  for(let i=0;i<2;i++){
-    const canvas=await html2canvas(pages[i],{
-      scale:2,
-      backgroundColor:"#fff",
-      useCORS:true,
-      logging:false,
-      width:pages[i].scrollWidth,
-      height:pages[i].scrollHeight
-    });
-    const img=canvas.toDataURL("image/jpeg",0.96);
-    if(i>0) pdf.addPage("a4","portrait");
-    pdf.addImage(img,"JPEG",0,0,210,297,undefined,"FAST");
-  }
-  pdf.save("banakhat-"+(V("date")||new Date().toISOString().slice(0,10))+".pdf");
+function openPreview(){
+ makePreview();
+ $("previewLarge").innerHTML=$("preview").innerHTML;
+ $("previewModal").classList.add("open");
+ $("previewModal").setAttribute("aria-hidden","false");
+ setZoom(1);
 }
-
+function closePreview(){
+ $("previewModal").classList.remove("open");
+ $("previewModal").setAttribute("aria-hidden","true");
+}
+let previewZoom=1;
+function setZoom(z){
+ previewZoom=Math.max(.5,Math.min(1.6,z));
+ $("previewLarge").style.transform=`scale(${previewZoom})`;
+ $("previewLarge").style.width=`${100/previewZoom}%`;
+ $("zoomText").textContent=Math.round(previewZoom*100)+"%";
+}
+function zoomPreview(dir){setZoom(previewZoom+dir*.1)}
+function savePDF(){
+ makePreview();
+ setTimeout(async()=>{
+   if(!window.html2canvas || !window.jspdf){alert("PDF માટે જરૂરી library લોડ થઈ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");return}
+   const {jsPDF}=window.jspdf;
+   const pages=[...document.querySelectorAll("#preview .a4page")];
+   const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
+   for(let i=0;i<pages.length;i++){
+     if(i>0)pdf.addPage("a4","portrait");
+     const canvas=await html2canvas(pages[i],{scale:2,useCORS:true,backgroundColor:"#fff"});
+     pdf.addImage(canvas.toDataURL("image/jpeg",.98),"JPEG",0,0,210,297);
+   }
+   pdf.save("banakhat-"+new Date().toISOString().slice(0,10)+".pdf");
+ },250);
+}
 async function saveJPG(){
-  makePreview();
-  await new Promise(r=>setTimeout(r,150));
-  if(!window.html2canvas){alert("JPG બનાવવા માટે જરૂરી library લોડ થઈ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");return;}
-  const pages=[...document.querySelectorAll("#preview .a4page")];
-  if(pages.length!==2){alert("બાનાખતના 2 A4 પેજ તૈયાર થયા નથી.");return;}
-  for(let i=0;i<2;i++){
-    const canvas=await html2canvas(pages[i],{
-      scale:2,
-      backgroundColor:"#fff",
-      useCORS:true,
-      logging:false,
-      width:pages[i].scrollWidth,
-      height:pages[i].scrollHeight
-    });
-    const a=document.createElement("a");
-    a.download=`banakhat-page-${i+1}.jpg`;
-    a.href=canvas.toDataURL("image/jpeg",0.96);
-    document.body.appendChild(a);a.click();a.remove();
-    await new Promise(r=>setTimeout(r,250));
-  }
+ makePreview();await new Promise(r=>setTimeout(r,120));
+ if(!window.html2canvas){alert("JPG બનાવવા માટે જરૂરી library લોડ થઈ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");return}
+ const pages=[...document.querySelectorAll("#preview .a4page")];
+ for(let i=0;i<pages.length;i++){
+   const canvas=await html2canvas(pages[i],{scale:2,backgroundColor:"#fff",useCORS:true});
+   const a=document.createElement("a");a.download=`banakhat-page-${i+1}.jpg`;a.href=canvas.toDataURL("image/jpeg",.96);a.click();
+   await new Promise(r=>setTimeout(r,150));
+ }
 }
 
 $("date").value=new Date().toISOString().slice(0,10);
@@ -454,7 +482,6 @@ setupPhoto("buyer");setupPhoto("seller");
 balanceCalc();makeInstallments();makePreview();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
