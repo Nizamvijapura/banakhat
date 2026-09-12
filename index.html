@@ -57,7 +57,7 @@ button{font:800 16px inherit;border:0;border-radius:8px;padding:10px 15px;cursor
 .pvtable{width:100%;border-collapse:collapse;margin-top:7px}.pvtable th,.pvtable td{border:1px solid #444;padding:4px;font-size:13px;text-align:center}
 .pvtable th{background:#eee}.pvsig{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
 .pvsig>div{border:1px solid #444;min-height:78px;padding:5px;text-align:center}.pvsig img{height:50px;max-width:100%;object-fit:contain}
-.amount-words{font-size:12px;font-weight:700}.pdf-note{font-size:11px;text-align:center}
+.amount-words{font-size:12px;font-weight:700}.pvbox strong{font-weight:900}.pdf-note{font-size:11px;text-align:center}
 @media(max-width:900px){.grid{grid-template-columns:1fr}.inst,.sign{grid-column:auto}.header h1{font-size:24px}.preview-window{width:100vw;height:100vh;border-radius:0}.a4page{width:210mm;height:297mm}.preview-viewport{padding:8px}}
 @media print{
  body{background:#fff}.wrap>*{display:none!important}.preview-modal{display:none!important}
@@ -133,7 +133,14 @@ const ones=["શૂન્ય","એક","બે","ત્રણ","ચાર","પ�
 function below1000(n){if(n<100)return ones[n]||"";let h=Math.floor(n/100),r=n%100;return (ones[h]||"")+" સો"+(r?" "+(ones[r]||""):"")}
 function words(n){n=Math.round(Number(n)||0);if(n===0)return"શૂન્ય";let a=[];if(n>=10000000){a.push(words(Math.floor(n/10000000))+" કરોડ");n%=10000000}if(n>=100000){a.push(below1000(Math.floor(n/100000))+" લાખ");n%=100000}if(n>=1000){a.push(below1000(Math.floor(n/1000))+" હજાર");n%=1000}if(n)a.push(below1000(n));return a.join(" ")}
 const amountWords=n=>words(n)+" રૂપિયા પુરા";
-function fmtDate(s){if(!s)return"-";let p=String(s).split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:String(s)}
+const guWeek=["રવિવાર","સોમવાર","મંગળવાર","બુધવાર","ગુરુવાર","શુક્રવાર","શનિવાર"];
+function fmtDate(s){
+  if(!s)return"-";
+  let p=String(s).split("-");
+  if(p.length!==3)return String(s);
+  let d=new Date(Number(p[0]),Number(p[1])-1,Number(p[2]));
+  return p[2]+"/"+p[1]+"/"+p[0]+" ("+guWeek[d.getDay()]+")";
+}
 const photo={buyer:"",seller:""},sigs={sb:"",ss:"",sw1:"",sw2:""};
 
 function land(){let g=+val("guntha")||0,r=+val("rate")||0;$("acre").value=g?(g/40).toFixed(4).replace(/0+$/,"").replace(/\.$/,""):"0";$("total").value=Math.round(g*r);balance()}
@@ -173,18 +180,18 @@ function makePreview(){
  $("preview").innerHTML='<div class="preview-pages">'+
  '<div class="a4page"><div class="pvhead"><h1>જમીન બાનાખત</h1><p>બાનાખત તારીખ: <b>'+fmtDate(val("date"))+'</b> વર્ષ</p></div>'+
  '<div class="pvgrid"><div class="pvbox pvperson">'+P("buyer")+'<b>ખરીદનાર (લેનાર)</b><br>નામ: '+esc(val("buyer"))+'<br>સરનામું: '+esc(val("ba"))+'<br>મો.: '+esc(val("bm"))+'</div>'+
- '<div class="pvbox pvperson">'+P("seller")+'<b>વેચનાર</b><br>નામ: '+esc(val("seller"))+'<br>સરનામું: '+esc(val("sa"))+'<br>મો.: '+esc(val("sm"))+'</div>'+
+ '<div class="pvbox pvperson">'+P("seller")+'<b>વેચનાર</b><br>નામ: <strong>'+esc(val("seller"))+'</strong><br>સરનામું: '+esc(val("sa"))+'<br>મો.: '+esc(val("sm"))+'</div>'+
  '<div class="pvbox"><b>જમીનની વિગતો</b><br>ગામ: '+esc(val("village"))+'<br>તાલુકો: '+esc(val("taluka"))+'<br>જિલ્લો: '+esc(val("district"))+'<br>સર્વે/બ્લોક: '+esc(val("survey"))+'<br>વિસ્તાર: '+money(g)+' ગુંઠા = '+(g/40).toFixed(4)+' એકર<br>'+esc(val("landdetail"))+'</div>'+
  '<div class="pvbox"><b>બાનાખતની કિંમત</b><br>કુલ કિંમત: <b>₹ '+money(t)+'</b><div class="amount-words">'+esc(amountWords(t))+'</div><br>બાનાપેટે: <b>₹ '+money(ad)+'</b><div class="amount-words">'+esc(amountWords(ad))+'</div><br>બાકી: <b>₹ '+money(b)+'</b><div class="amount-words">'+esc(amountWords(b))+'</div><br>છેલ્લી તારીખ: '+fmtDate(val("due"))+'</div></div>'+
- '<div class="pvclause"><p><b>• બાનાખતનો વિગતવાર કરાર:</b></p>'+
- '<p>• આજ રોજ ઉપરોક્ત તારીખે હું વેચનાર, ઉપરોક્ત જમીન મારી માલિકીની અને કાયદેસર હકવાળી હોવાનું જણાવી, આ જમીન ખરીદનારને કુલ <b>₹ '+money(t)+'</b> ('+esc(amountWords(t))+') માં વેચવા માટે સ્વેચ્છાએ સંમત થયો/થઈ છું.</p>'+
- '<p>• આજરોજ ખરીદનાર તરફથી વેચનારને બાનાપેટે/એડવાન્સ તરીકે <b>₹ '+money(ad)+'</b> ('+esc(amountWords(ad))+') ચૂકવવામાં આવેલ છે. બાકી <b>₹ '+money(b)+'</b> ('+esc(amountWords(b))+') રકમ નીચે દર્શાવેલ હપ્તાઓ મુજબ ચૂકવવાની રહેશે.</p>'+
- '<p>• ખરીદનારએ આ જમીન પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં, કોઈપણ દબાણ, ધમકી કે ગેરસમજ વિના સ્વેચ્છાએ ખરીદવાની સંમતિ આપી છે. વેચનારએ પણ પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં આ બાનાખત કરી છે.</p>'+
- '<p>• વેચનાર ખાતરી આપે છે કે ઉપરોક્ત જમીન અંગેનો માલિકી હક તથા વેચાણ કરવાનો અધિકાર પોતે ધરાવે છે. કોઈ ગીરો, બોજો, કોર્ટ કેસ, દાવો, કબજાનો વિવાદ અથવા અન્ય હક-દાવો હોય અને તે છુપાવવામાં આવ્યો હોય તો તેની જવાબદારી વેચનારની રહેશે.</p>'+
- '<p>• વેચનાર જરૂરી કાયદેસર દસ્તાવેજી પ્રક્રિયામાં ખરીદનારને સહકાર આપશે અને સંપૂર્ણ વેચાણ કિંમત પ્રાપ્ત થયા બાદ લાગુ કાયદા મુજબ વેચાણ દસ્તાવેજ/રજિસ્ટર્ડ દસ્તાવેજ કરાવવા હાજર રહેશે.</p></div></div>'+
+ '<div class="pvclause"><p><b>બાનાખતનો વિગતવાર કરાર:</b></p>'+
+ '<p><b>(1)</b> આજ રોજ ઉપરોક્ત તારીખે હું વેચનાર, ઉપરોક્ત જમીન મારી માલિકીની અને કાયદેસર હકવાળી હોવાનું જણાવી, આ જમીન ખરીદનારને કુલ <b>₹ '+money(t)+'</b> ('+esc(amountWords(t))+') માં વેચવા માટે સ્વેચ્છાએ સંમત થયો/થઈ છું.</p>'+
+ '<p><b>(2)</b> આજરોજ ખરીદનાર તરફથી વેચનારને બાનાપેટે/એડવાન્સ તરીકે <b>₹ '+money(ad)+'</b> ('+esc(amountWords(ad))+') ચૂકવવામાં આવેલ છે. બાકી <b>₹ '+money(b)+'</b> ('+esc(amountWords(b))+') રકમ નીચે દર્શાવેલ હપ્તાઓ મુજબ ચૂકવવાની રહેશે.</p>'+
+ '<p><b>(3)</b> ખરીદનારએ આ જમીન પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં, કોઈપણ દબાણ, ધમકી કે ગેરસમજ વિના સ્વેચ્છાએ ખરીદવાની સંમતિ આપી છે. વેચનારએ પણ પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં આ બાનાખત કરી છે.</p>'+
+ '<p><b>(4)</b> વેચનાર ખાતરી આપે છે કે ઉપરોક્ત જમીન અંગેનો માલિકી હક તથા વેચાણ કરવાનો અધિકાર પોતે ધરાવે છે. કોઈ ગીરો, બોજો, કોર્ટ કેસ, દાવો, કબજાનો વિવાદ અથવા અન્ય હક-દાવો હોય અને તે છુપાવવામાં આવ્યો હોય તો તેની જવાબદારી વેચનારની રહેશે.</p>'+
+ '<p><b>(5)</b> વેચનાર જરૂરી કાયદેસર દસ્તાવેજી પ્રક્રિયામાં ખરીદનારને સહકાર આપશે અને સંપૂર્ણ વેચાણ કિંમત પ્રાપ્ત થયા બાદ લાગુ કાયદા મુજબ વેચાણ દસ્તાવેજ/રજિસ્ટર્ડ દસ્તાવેજ કરાવવા હાજર રહેશે.</p></div></div>'+
  '<div class="a4page"><div class="pvhead"><h1>જમીન બાનાખત — હપ્તા અને શરતો</h1><p>બાનાખત તારીખ: <b>'+fmtDate(val("date"))+'</b> વર્ષ</p></div>'+
  '<h2 style="font-size:19px">હપ્તાની વિગતો</h2><table class="pvtable"><thead><tr><th>હપ્તા નં.</th><th>રકમ (₹)</th><th>ચૂકવણી તારીખ</th></tr></thead><tbody>'+rows+'</tbody></table>'+
- '<div class="pvclause"><p><b>• બાનાખતની અન્ય શરતો:</b></p><p>• હપ્તાની રકમ અને તારીખો ઉપરની યાદીમાં દર્શાવેલ છે. બંને પક્ષોની પરસ્પર સંમતિથી જરૂરી ફેરફાર લેખિત રીતે કરી શકાશે.</p><p>• બંને પક્ષોએ આ બાનાખતની તમામ શરતો વાંચી/વાંચાવી, સમજી, પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં, કોઈપણ દબાણ કે બળજબરી વિના, સ્વેચ્છાએ સ્વીકારી છે.</p>'+
+ '<div class="pvclause"><p><b>બાનાખતની અન્ય શરતો:</b></p><p><b>(1)</b> હપ્તાની રકમ અને તારીખો ઉપરની યાદીમાં દર્શાવેલ છે. બંને પક્ષોની પરસ્પર સંમતિથી જરૂરી ફેરફાર લેખિત રીતે કરી શકાશે.</p><p><b>(2)</b> બંને પક્ષોએ આ બાનાખતની તમામ શરતો વાંચી/વાંચાવી, સમજી, પોતાની સંપૂર્ણ સમજ અને હોંશ-હવાસમાં, કોઈપણ દબાણ કે બળજબરી વિના, સ્વેચ્છાએ સ્વીકારી છે.</p>'+
  (val("terms")?'<p><b>• ખાસ શરતો:</b><br>'+esc(val("terms"))+'</p>':"")+'</div>'+
  '<div class="pvsig"><div><b>ખરીદનારની સહી</b><br>'+S("sb")+'</div><div><b>વેચનારની સહી</b><br>'+S("ss")+'</div><div><b>સાક્ષી 1 ની સહી</b><br>'+S("sw1")+'</div><div><b>સાક્ષી 2 ની સહી</b><br>'+S("sw2")+'</div></div></div></div>';
  return $("preview");
@@ -195,8 +202,75 @@ function closePreview(){$("modal").classList.remove("open")}
 let zoom=1;
 function setZoom(z){zoom=Math.max(.5,Math.min(1.5,z));$("previewLarge").style.transform="scale("+zoom+")";$("zoomText").textContent=Math.round(zoom*100)+"%"}
 function printDoc(){makePreview();window.print()}
-function savePDF(){makePreview();alert("PDF માટે હવે Print window માં 'Save as PDF' પસંદ કરો. GitHub Pages પર આ સૌથી વિશ્વસનીય PDF રીત છે.");window.print()}
-function saveJPG(){alert("JPG માટે Preview ખોલીને browserના screenshot/save વિકલ્પનો ઉપયોગ કરો. PDF/Print સંપૂર્ણ રીતે કાર્યરત છે.")}
+
+async function savePDF(){
+  try{
+    makePreview();
+    if(!window.html2canvas || !window.jspdf){
+      alert("PDF library લોડ થઈ નથી. Internet ચાલુ રાખીને 5-10 સેકન્ડ પછી ફરી પ્રયાસ કરો.");
+      return;
+    }
+    const pages=[...document.querySelectorAll("#preview .a4page")];
+    if(!pages.length){alert("પહેલા બાનાખત તૈયાર કરો.");return;}
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait",compress:true});
+    for(let i=0;i<pages.length;i++){
+      if(i>0)pdf.addPage("a4","portrait");
+      const canvas=await html2canvas(pages[i],{
+        scale:2,
+        useCORS:true,
+        allowTaint:false,
+        backgroundColor:"#ffffff",
+        logging:false,
+        windowWidth:pages[i].scrollWidth,
+        windowHeight:pages[i].scrollHeight
+      });
+      pdf.addImage(canvas.toDataURL("image/jpeg",0.96),"JPEG",0,0,210,297);
+    }
+    pdf.save("Jamin-Banakhat-"+(val("date")||"document")+".pdf");
+  }catch(err){
+    console.error(err);
+    alert("PDF save થઈ શક્યું નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");
+  }
+}
+
+async function saveJPG(){
+  try{
+    makePreview();
+    if(!window.html2canvas){
+      alert("JPG library લોડ થઈ નથી. Internet ચાલુ રાખીને 5-10 સેકન્ડ પછી ફરી પ્રયાસ કરો.");
+      return;
+    }
+    const pages=[...document.querySelectorAll("#preview .a4page")];
+    if(!pages.length){alert("પહેલા બાનાખત તૈયાર કરો.");return;}
+    for(let i=0;i<pages.length;i++){
+      const canvas=await html2canvas(pages[i],{
+        scale:2,
+        useCORS:true,
+        allowTaint:false,
+        backgroundColor:"#ffffff",
+        logging:false,
+        windowWidth:pages[i].scrollWidth,
+        windowHeight:pages[i].scrollHeight
+      });
+      const link=document.createElement("a");
+      link.download="Jamin-Banakhat-page-"+(i+1)+".jpg";
+      link.href=canvas.toDataURL("image/jpeg",0.96);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      await new Promise(resolve=>setTimeout(resolve,500));
+    }
+  }catch(err){
+    console.error(err);
+    alert("JPG save થઈ શક્યું નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");
+  }
+}
+
+function printDoc(){
+  makePreview();
+  window.print();
+}
 
 $("guntha").addEventListener("input",land);$("rate").addEventListener("input",land);$("acre").addEventListener("input",acre);
 $("total").addEventListener("input",balance);$("adv").addEventListener("input",balance);$("makeInst").addEventListener("click",makeInstallments);
@@ -211,5 +285,7 @@ $("instBody").addEventListener("click",e=>{let b=e.target.closest(".rowdel");if(
 let today=new Date().toISOString().slice(0,10);$("date").value=today;$("due").value=today;balance();makeInstallments();makePreview();
 })();
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
