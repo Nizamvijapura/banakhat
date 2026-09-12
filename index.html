@@ -57,13 +57,17 @@ button{font:800 16px inherit;border:0;border-radius:8px;padding:10px 15px;cursor
 .pvtable{width:100%;border-collapse:collapse;margin-top:7px}.pvtable th,.pvtable td{border:1px solid #444;padding:4px;font-size:13px;text-align:center}
 .pvtable th{background:#eee}.pvsig{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
 .pvsig>div{border:1px solid #444;min-height:78px;padding:5px;text-align:center}.pvsig img{height:50px;max-width:100%;object-fit:contain}
-.amount-words{font-size:12px;font-weight:700}.pvbox strong{font-weight:900}.pdf-note{font-size:11px;text-align:center}
+.amount-words{font-size:12px;font-weight:700}.pdf-note{font-size:11px;text-align:center}
 @media(max-width:900px){.grid{grid-template-columns:1fr}.inst,.sign{grid-column:auto}.header h1{font-size:24px}.preview-window{width:100vw;height:100vh;border-radius:0}.a4page{width:210mm;height:297mm}.preview-viewport{padding:8px}}
 @media print{
+@page{size:A4 portrait;margin:0}
+html,body{width:210mm!important;margin:0!important;padding:0!important;background:#fff!important}
+body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+
  body{background:#fff}.wrap>*{display:none!important}.preview-modal{display:none!important}
  #preview{display:block!important}.preview-pages{display:block!important;transform:none!important}
  .a4page{display:block!important;margin:0!important;box-shadow:none!important;break-after:page;page-break-after:always}
- .a4page:last-child{break-after:auto;page-break-after:auto}@page{size:A4;margin:0}
+ .a4page:last-child{break-after:auto;page-break-after:auto}
 }
 </style>
 </head>
@@ -179,7 +183,7 @@ function makePreview(){
  const S=id=>sigs[id]?'<img src="'+sigs[id]+'">':"________________";
  $("preview").innerHTML='<div class="preview-pages">'+
  '<div class="a4page"><div class="pvhead"><h1>જમીન બાનાખત</h1><p>બાનાખત તારીખ: <b>'+fmtDate(val("date"))+'</b> વર્ષ</p></div>'+
- '<div class="pvgrid"><div class="pvbox pvperson">'+P("buyer")+'<b>ખરીદનાર (લેનાર)</b><br>નામ: '+esc(val("buyer"))+'<br>સરનામું: '+esc(val("ba"))+'<br>મો.: '+esc(val("bm"))+'</div>'+
+ '<div class="pvgrid"><div class="pvbox pvperson">'+P("buyer")+'<b>ખરીદનાર (લેનાર)</b><br>નામ: <strong>'+esc(val("buyer"))+'</strong><br>સરનામું: '+esc(val("ba"))+'<br>મો.: '+esc(val("bm"))+'</div>'+
  '<div class="pvbox pvperson">'+P("seller")+'<b>વેચનાર</b><br>નામ: <strong>'+esc(val("seller"))+'</strong><br>સરનામું: '+esc(val("sa"))+'<br>મો.: '+esc(val("sm"))+'</div>'+
  '<div class="pvbox"><b>જમીનની વિગતો</b><br>ગામ: '+esc(val("village"))+'<br>તાલુકો: '+esc(val("taluka"))+'<br>જિલ્લો: '+esc(val("district"))+'<br>સર્વે/બ્લોક: '+esc(val("survey"))+'<br>વિસ્તાર: '+money(g)+' ગુંઠા = '+(g/40).toFixed(4)+' એકર<br>'+esc(val("landdetail"))+'</div>'+
  '<div class="pvbox"><b>બાનાખતની કિંમત</b><br>કુલ કિંમત: <b>₹ '+money(t)+'</b><div class="amount-words">'+esc(amountWords(t))+'</div><br>બાનાપેટે: <b>₹ '+money(ad)+'</b><div class="amount-words">'+esc(amountWords(ad))+'</div><br>બાકી: <b>₹ '+money(b)+'</b><div class="amount-words">'+esc(amountWords(b))+'</div><br>છેલ્લી તારીખ: '+fmtDate(val("due"))+'</div></div>'+
@@ -201,57 +205,105 @@ function openPreview(){makePreview();$("previewLarge").innerHTML=$("preview").in
 function closePreview(){$("modal").classList.remove("open")}
 let zoom=1;
 function setZoom(z){zoom=Math.max(.5,Math.min(1.5,z));$("previewLarge").style.transform="scale("+zoom+")";$("zoomText").textContent=Math.round(zoom*100)+"%"}
-function printDoc(){makePreview();window.print()}
+
+function printDoc(){
+  makePreview();
+  const pages=[...document.querySelectorAll("#preview .a4page")];
+  const w=window.open("","_blank");
+  if(!w){alert("Print window ખોલવા browser permission આપો.");return;}
+  const styles=[...document.querySelectorAll("style")].map(s=>s.textContent).join("\n");
+  w.document.open();
+  w.document.write('<!doctype html><html lang="gu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>જમીન બાનાખત</title><style>'+
+    styles+
+    '\nhtml,body{margin:0!important;padding:0!important;background:#fff!important}'+
+    '\n.print-root{margin:0!important;padding:0!important}'+
+    '\n.a4page{width:210mm!important;height:297mm!important;margin:0!important;padding:10mm!important;box-shadow:none!important;overflow:hidden!important;break-after:page!important;page-break-after:always!important;box-sizing:border-box!important}'+
+    '\n.a4page:last-child{break-after:auto!important;page-break-after:auto!important}'+
+    '\n@page{size:A4 portrait;margin:0}'+
+    '</style></head><body><div class="print-root">'+
+    pages.map(p=>p.outerHTML).join("")+
+    '</div><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</body></html>');
+  w.document.close();
+  w.onload=function(){
+    setTimeout(function(){w.focus();w.print();},350);
+  };
+}
 
 async function savePDF(){
   try{
     makePreview();
-    if(!window.html2canvas || !window.jspdf){
-      alert("PDF library લોડ થઈ નથી. Internet ચાલુ રાખીને 5-10 સેકન્ડ પછી ફરી પ્રયાસ કરો.");
-      return;
-    }
     const pages=[...document.querySelectorAll("#preview .a4page")];
     if(!pages.length){alert("પહેલા બાનાખત તૈયાર કરો.");return;}
+    if(!window.html2canvas || !window.jspdf){
+      alert("PDF library લોડ થઈ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");
+      return;
+    }
+
+    // html2canvas cannot reliably render display:none elements.
+    // Temporarily put the source pages off-screen but visible.
+    const holder=document.createElement("div");
+    holder.style.cssText="position:fixed;left:-100000px;top:0;width:210mm;background:#fff;z-index:-1;display:block;";
+    holder.innerHTML=pages.map(p=>p.outerHTML).join("");
+    document.body.appendChild(holder);
+
+    const renderPages=[...holder.querySelectorAll(".a4page")];
     const {jsPDF}=window.jspdf;
     const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait",compress:true});
-    for(let i=0;i<pages.length;i++){
-      if(i>0)pdf.addPage("a4","portrait");
-      const canvas=await html2canvas(pages[i],{
+
+    for(let i=0;i<renderPages.length;i++){
+      const canvas=await html2canvas(renderPages[i],{
         scale:2,
+        backgroundColor:"#ffffff",
         useCORS:true,
         allowTaint:false,
-        backgroundColor:"#ffffff",
         logging:false,
-        windowWidth:pages[i].scrollWidth,
-        windowHeight:pages[i].scrollHeight
+        width:794,
+        height:1123,
+        windowWidth:794,
+        windowHeight:1123
       });
+      if(i>0)pdf.addPage("a4","portrait");
       pdf.addImage(canvas.toDataURL("image/jpeg",0.96),"JPEG",0,0,210,297);
     }
-    pdf.save("Jamin-Banakhat-"+(val("date")||"document")+".pdf");
+    document.body.removeChild(holder);
+
+    const filename="Jamin-Banakhat-"+(val("date")||"document")+".pdf";
+    pdf.save(filename);
   }catch(err){
     console.error(err);
-    alert("PDF save થઈ શક્યું નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");
+    alert("PDF save કરવામાં સમસ્યા આવી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");
   }
 }
 
 async function saveJPG(){
   try{
     makePreview();
-    if(!window.html2canvas){
-      alert("JPG library લોડ થઈ નથી. Internet ચાલુ રાખીને 5-10 સેકન્ડ પછી ફરી પ્રયાસ કરો.");
-      return;
-    }
     const pages=[...document.querySelectorAll("#preview .a4page")];
     if(!pages.length){alert("પહેલા બાનાખત તૈયાર કરો.");return;}
-    for(let i=0;i<pages.length;i++){
-      const canvas=await html2canvas(pages[i],{
+    if(!window.html2canvas){
+      alert("JPG library લોડ થઈ નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");
+      return;
+    }
+
+    const holder=document.createElement("div");
+    holder.style.cssText="position:fixed;left:-100000px;top:0;width:210mm;background:#fff;z-index:-1;display:block;";
+    holder.innerHTML=pages.map(p=>p.outerHTML).join("");
+    document.body.appendChild(holder);
+
+    const renderPages=[...holder.querySelectorAll(".a4page")];
+    for(let i=0;i<renderPages.length;i++){
+      const canvas=await html2canvas(renderPages[i],{
         scale:2,
+        backgroundColor:"#ffffff",
         useCORS:true,
         allowTaint:false,
-        backgroundColor:"#ffffff",
         logging:false,
-        windowWidth:pages[i].scrollWidth,
-        windowHeight:pages[i].scrollHeight
+        width:794,
+        height:1123,
+        windowWidth:794,
+        windowHeight:1123
       });
       const link=document.createElement("a");
       link.download="Jamin-Banakhat-page-"+(i+1)+".jpg";
@@ -259,17 +311,13 @@ async function saveJPG(){
       document.body.appendChild(link);
       link.click();
       link.remove();
-      await new Promise(resolve=>setTimeout(resolve,500));
+      await new Promise(r=>setTimeout(r,600));
     }
+    document.body.removeChild(holder);
   }catch(err){
     console.error(err);
-    alert("JPG save થઈ શક્યું નથી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");
+    alert("JPG save કરવામાં સમસ્યા આવી. Internet ચાલુ રાખીને ફરી પ્રયાસ કરો.");
   }
-}
-
-function printDoc(){
-  makePreview();
-  window.print();
 }
 
 $("guntha").addEventListener("input",land);$("rate").addEventListener("input",land);$("acre").addEventListener("input",acre);
@@ -285,7 +333,5 @@ $("instBody").addEventListener("click",e=>{let b=e.target.closest(".rowdel");if(
 let today=new Date().toISOString().slice(0,10);$("date").value=today;$("due").value=today;balance();makeInstallments();makePreview();
 })();
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
